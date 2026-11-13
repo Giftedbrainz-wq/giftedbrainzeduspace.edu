@@ -1,0 +1,13 @@
+/* Gifted Brainz official palette: navy leads; logo gold is a restrained accent. */
+:root{--gb-brand-gold:#c99b47;--gb-brand-gold-light:#fff8e7}
+:focus-visible{outline-color:var(--gb-brand-gold)}
+body :is(.card,.battle-question-card,.learning-item):focus-within{border-color:#cbb078}
+body :is(.btn.primary,.btn-primary):not(:disabled):focus-visible{box-shadow:0 0 0 3px #f3dba9}
+body .battle-question-card[open]{border-color:#cbb078!important}
+body .battle-question-card summary::before{color:#b78b39}
+body .battle-pill,body .learning-pill{border-color:#e9d19d}
+
+/* Gold only as an accent: navy remains the dominant brand colour. */
+body .progress > i,body .progress-track > span,body .upload-progress-fill{background:linear-gradient(90deg,#1b62b1,#c99b47)!important}
+body :is(input,textarea,select):focus{border-color:#c99b47}
+body :is(.btn,.chip).selected{box-shadow:inset 0 -2px 0 #c99b47}

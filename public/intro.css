@@ -1,0 +1,16 @@
+/* Accessible, GPU-friendly opening scene for the homepage only */
+.gb-intro{position:fixed;inset:0;z-index:10000;background:radial-gradient(ellipse at 50% 43%,#163f77 0%,#082450 55%,#04162f 100%);color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;isolation:isolate;overflow:hidden;text-align:center;padding:24px}
+.gb-intro[hidden]{display:none}.gb-intro:before{content:"";position:absolute;inset:0;opacity:.22;background-image:radial-gradient(#f5c96b 1px,transparent 1px);background-size:39px 39px;animation:gbStars 4s ease-in-out infinite alternate;pointer-events:none}
+.gb-intro-aura{width:230px;height:230px;position:absolute;top:calc(50% - 202px);left:calc(50% - 115px);border-radius:50%;background:radial-gradient(circle,#f7cc5b77 2%,#e9b54830 34%,transparent 69%);filter:drop-shadow(0 0 36px #ffc75044);animation:gbAura 2.4s ease-in-out infinite alternate}
+.gb-aura-ring{position:absolute;inset:17px;border:1px solid #eac25b77;border-radius:50%;transform:rotate(-25deg);animation:gbRing 6s linear infinite}.gb-aura-ring.second{inset:0;border-color:#8bb9e333;animation-direction:reverse;animation-duration:9s}
+.gb-aura-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#ffe59a;box-shadow:0 0 15px #ffdb7d}.gb-aura-spark.a{top:23px;left:40px}.gb-aura-spark.b{top:132px;right:3px}.gb-aura-spark.c{bottom:15px;left:78px}
+.gb-intro-logo{position:relative;width:116px;height:116px;object-fit:contain;margin-top:-40px;filter:drop-shadow(0 8px 18px #020d28);animation:gbRise .85s cubic-bezier(.2,.9,.2,1) both}
+.gb-intro-name{position:relative;font-size:clamp(1.85rem,6vw,3.2rem);font-weight:950;letter-spacing:.095em;margin-top:21px;animation:gbRise .8s .27s both}.gb-intro-name span{color:#f7c85d}.gb-intro-eduspace{position:relative;color:#f0c26b;font-size:clamp(.76rem,2vw,1.05rem);font-weight:800;letter-spacing:.48em;margin-top:5px;animation:gbRise .8s .47s both}.gb-intro p{position:relative;color:#d7e6fb;margin-top:18px;font-size:.94rem;animation:gbRise .8s .65s both}
+#gbSkipIntro{position:absolute;bottom:30px;right:32px;background:#ffffff14;color:#fff;border:1px solid #ffffff55;border-radius:12px;padding:10px 15px;cursor:pointer;font:inherit;min-height:44px}
+.gb-intro.gb-intro-out{opacity:0;visibility:hidden;transition:opacity .48s ease,visibility .48s ease}
+@keyframes gbRise{from{opacity:0;transform:translateY(21px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes gbAura{from{transform:scale(.9);opacity:.6}to{transform:scale(1.13);opacity:1}}@keyframes gbRing{to{transform:rotate(335deg)}}@keyframes gbStars{to{opacity:.44}}
+@media(prefers-reduced-motion:reduce){.gb-intro *, .gb-intro:before{animation:none!important}.gb-intro.gb-intro-out{transition:none}}
+
+/* Keep the homepage underneath invisible and non-interactive until the welcome scene closes. */
+body.gb-intro-active{overflow:hidden}body.gb-intro-active>.top,body.gb-intro-active>.hero,body.gb-intro-active>.section,body.gb-intro-active>.home-foot{visibility:hidden}

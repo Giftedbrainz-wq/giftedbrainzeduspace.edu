@@ -1,0 +1,67 @@
+/* Gifted Brainz EduSpace • v12.12.0
+   Cleaner visual rhythm, modern typography and deliberately smaller phone UI.
+   Never disable zoom or lock text sizes. Keep mathematics in its own font. */
+:root { --gb-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+html { font-size: 16px; }
+body { font-size: .96rem; line-height: 1.52; font-weight: 400; }
+button, input, select, textarea { font-family: var(--gb-font); }
+h1, h2, h3, h4, h5, h6 { letter-spacing: -.025em; line-height: 1.25; }
+.hero h1 { font-size: clamp(2.4rem, 4.5vw, 3.7rem); line-height: 1.08; }
+.page-title, .side-brand, .brand, .section-head h2 { letter-spacing: -.015em; }
+.btn, button { font-weight: 700; }
+.sidenav .nav-text .lbl { font-weight: 600; }
+/* Keep scientific and code notation unaffected by brand typography. */
+pre, code, kbd, samp, .monospace, .katex, .katex * { letter-spacing: normal; }
+
+@media (max-width: 600px) {
+  html { font-size: 15px; }
+  body { font-size: 1rem; line-height: 1.5; }
+  .content, .main .content { padding: 13px; gap: 13px; }
+  .card, .matcard, .anncard, .learning-item, .battle-team { padding: 14px; }
+  .hero-banner, .battle-hero { padding: 17px; }
+  .section { padding: 32px 0; }
+  .hero { padding: 36px 0 42px; }
+  .hero h1 { font-size: clamp(1.85rem, 7.5vw, 2.25rem); line-height: 1.12; }
+  .hero p { font-size: 1rem; line-height: 1.55; }
+  .hero-banner h1, .gb-superbiz-hero h1 { font-size: clamp(1.35rem, 5.5vw, 1.6rem); line-height: 1.25; }
+  .battle-hero h1 { font-size: clamp(1.4rem, 5.6vw, 1.7rem); }
+  .home-section-title { font-size: 1.35rem; }
+  .section-head h2 { font-size: 1.06rem; }
+  .page-title, .topbar .page-title { font-size: 1.02rem; line-height: 1.28; }
+  .brand span { font-size: .9rem; }
+  .nav-text .lbl, .sidenav .nav-text .lbl { font-size: .9rem; }
+  .nav-group-title { font-size: .74rem; }
+  .stat strong, .statcard strong, .learning-stat strong { font-size: 1.5rem; }
+  .statcard .ic { font-size: 1.24rem; }
+  .learning-head h1 { font-size: 1.45rem; }
+  .learning-item h3, .matcard h3, .anncard h3 { font-size: 1rem; }
+  .exam-qtext, #battleQuestion { font-size: 1.05rem; line-height: 1.58; }
+  .exam-heading b { font-size: .98rem; }
+  .battle-code strong { font-size: 1.45rem; }
+  .battle-timer { font-size: 1.45rem; }
+  .battle-result-premium h2 { font-size: clamp(1.25rem, 5vw, 1.65rem); }
+  .res-top b, .remark-word { font-size: 1.2rem; }
+  .res-score { font-size: 1.6rem; }
+  .gb-intro-name { font-size: clamp(1.68rem, 6.6vw, 2.1rem); }
+  .gb-intro-eduspace { font-size: .75rem; letter-spacing: .3em; }
+  .gb-channel-prompt h2 { font-size: 1.1rem; }
+  .gb-channel-prompt p { font-size: .93rem; }
+  .btn, .gb-channel-follow, .gb-channel-later { font-size: .95rem; }
+  /* 16px form controls prevent iOS auto-zoom; text remains user-scalable. */
+  input, select, textarea, .field input, .field select, .field textarea,
+  .learning-form input, .learning-form select, .learning-form textarea,
+  .learning-chat-compose input, .battle-form input, .battle-form select,
+  .battle-chat-compose input { font-size: 16px !important; }
+  .sidenav small, .nav-text small, .statcard small { font-size: max(.8rem, 12px); }
+  .home-feature h3 { font-size: 1rem; }
+  .home-feature p { font-size: .95rem; line-height: 1.5; }
+  .formbox { padding: 19px; margin: 22px auto; }
+  .gb-loader-title { font-size: 1.05rem; }
+}
+@media (max-width: 390px) {
+  .content, .main .content { padding: 11px; }
+  .card { padding: 13px; }
+  .hero h1 { font-size: 1.84rem; }
+  .hero-banner h1 { font-size: 1.36rem; }
+  .section-head h2 { font-size: 1.02rem; }
+}

@@ -1,0 +1,17 @@
+(()=>{'use strict';const {esc,avatar,when,api,status}=GBStudy,$=id=>document.getElementById(id);
+ let timer=null;const say=(s,e)=>status($('studyStatus'),s,e);
+ const personRow=(r,m)=>{const p=r.person||{},latest=m?.lastMessage;
+ const preview=latest?(latest.deletedAt?'':latest.text):'Open your study conversation';
+ return `<a class="study-person" href="/study-chat.html?with=${encodeURIComponent(p.id||'')}"><img src="${avatar(p.avatar)}" alt=""><span class="study-person-main"><strong>${esc(p.name||p.username||'Study partner')} ${p.online?'🟢':'⚪'}</strong><small>${esc(preview)}</small></span><span class="study-time">${latest?esc(when(latest.createdAt)):''}${m?.unreadCount?`<span class="study-count">${m.unreadCount}</span>`:''}</span></a>`;};
+ async function refresh(){try{const [relations,communities]=await Promise.all([api('partners'),api('communities?mine=1')]);
+ const chats=relations.filter(x=>x.status==='accepted');$('chatCount').textContent=chats.length+' conversations';
+ chats.sort((a,b)=>String(b.lastMessage?.createdAt||'').localeCompare(String(a.lastMessage?.createdAt||'')));
+ $('chatList').innerHTML=chats.length?chats.map(x=>personRow(x,x)).join(''):'<p class="study-empty">No chats yet. Explore Students to request a partnership.</p>';
+ const requests=relations.filter(x=>x.status==='pending');$('partnerRequests').innerHTML=requests.length?requests.map(r=>`<article class="study-request"><div class="request-body"><strong>${esc(r.person?.name||'Student')}</strong><small>${r.direction==='received'?'Sent you a partnership request':'Waiting for approval'}</small></div>${r.direction==='received'?`<div class="request-actions"><button class="btn primary" data-answer="${esc(r.id)}" data-accept="1">Accept</button><button class="btn light" data-answer="${esc(r.id)}" data-accept="0">Decline</button></div>`:''}</article>`).join(''):'<p class="study-empty">No pending requests.</p>';
+ const joined=communities.communities.filter(c=>c.joined);$('myCommunities').innerHTML=joined.length?joined.map(c=>`<a href="/study-chat.html?community=${encodeURIComponent(c.id)}" class="study-person"><img src="/api/community-photo/${encodeURIComponent(c.id)}" alt="" onerror="this.onerror=null;this.src='/assets/avatars/scholar-01.png'"><span class="study-person-main"><strong>${esc(c.name)}</strong><small>${c.members}/20 members · ${esc(c.subject||'General')}</small></span><span>›</span></a>`).join(''):'<p class="study-empty">Join a Study Community to learn together.</p>';
+ }catch(e){say(e.message,true)}}
+ $('partnerRequests').addEventListener('click',async e=>{const btn=e.target.closest('[data-answer]');if(!btn)return;btn.disabled=true;try{await api('partners/'+encodeURIComponent(btn.dataset.answer)+'/respond','POST',{accept:btn.dataset.accept==='1'});await refresh();say('Partnership updated.')}catch(e){say(e.message,true)}finally{btn.disabled=false}});
+ api('partners/presence','POST',{}).catch(()=>{});refresh();timer=setInterval(()=>{if(!document.hidden)refresh()},12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+ // Presence heartbeats only while this page is open.
+ setInterval(()=>{if(!document.hidden)api('partners/presence','POST',{}).catch(()=>{})},30000);
+})();

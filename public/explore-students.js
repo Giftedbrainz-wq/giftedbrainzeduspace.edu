@@ -1,0 +1,14 @@
+(()=>{'use strict';if(!GB.token()){location.replace('/login.html');return;}GBUI.mount({active:'/study-partners.html'});
+const $=id=>document.getElementById(id),esc=GBUI.esc;const avatar=x=>/^custom-[a-f0-9-]{36}$/.test(String(x||''))?'/api/profile-photo/'+x.slice(7):'/assets/avatars/'+(/^scholar-(0[1-9]|1\d|2[0-4])$/.test(String(x||''))?x:'scholar-01')+'.png';let offset=0,query='',requestId=0,timer=0;
+const api=(path,method='GET',body)=>GB.api('/api/learning/partners'+path,{method,...(body===undefined?{}:{headers:{'content-type':'application/json'},body:JSON.stringify(body)})});
+const status=(text,error=false)=>{const e=$('discoveryMessage');e.textContent=text;e.classList.toggle('error',error)};
+function card(p){return `<article class="discovery-entry"><img src="${avatar(p.avatar)}" alt=""><div><strong>${esc(p.name||p.username)}</strong><div class="muted">@${esc(p.username)}</div><div class="discovery-meta"><span class="discovery-status ${p.online?'online':'offline'}">${p.online?'🟢 Online':'⚪ Offline'}</span></div></div><div class="discovery-action"><button type="button" class="btn primary" data-request="${esc(p.id)}">Request Partnership</button></div></article>`;}
+async function load(reset=false){if(reset)offset=0;const epoch=++requestId;status('');try{const page=await api('/explore?offset='+offset+'&q='+encodeURIComponent(query));if(epoch!==requestId)return;const rows=page.students||[];const list=$('studentResults');if(reset)list.innerHTML='';list.insertAdjacentHTML('beforeend',rows.map(card).join(''));offset+=rows.length;$('loadMoreStudents').hidden=!page.hasMore;$('studentCount').textContent=offset+' of '+(page.total||0)+' students';if(!offset)list.innerHTML='<p class="discovery-empty">No students found.</p>';}catch(e){if(epoch===requestId)status(e.message,true)}}
+$('studentSearch').addEventListener('input',e=>{query=e.target.value.trim();clearTimeout(timer);timer=setTimeout(()=>load(true),350)});
+$('refreshStudents').onclick=()=>load(true);$('loadMoreStudents').onclick=()=>load(false);
+$('studentResults').onclick=async e=>{const b=e.target.closest('[data-request]');if(!b)return;b.disabled=true;try{await api('/request','POST',{userId:b.dataset.request});b.textContent='✓ Request sent';status('Partnership request sent. The student can approve it in Study Partners.');}catch(err){status(err.message,true);b.disabled=false;}};
+const presence=()=>GB.api('/api/learning/partners/presence',{method:'POST',body:JSON.stringify({}),headers:{'content-type':'application/json'},retryAttempts:1}).catch(()=>{});
+setInterval(()=>{if(document.hidden)return;presence();if(offset<=40)load(true);},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){presence();if(offset<=40)load(true);}});
+presence();load(true);
+})();

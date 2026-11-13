@@ -1,0 +1,177 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d2a5c"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/assets/favicon.ico"><link rel="apple-touch-icon" href="/assets/icon-192.png"><title>Video Lessons • Gifted Brainz Tutorial</title><link rel="preconnect" href="https://i.ytimg.com" crossorigin><link rel="dns-prefetch" href="https://img.youtube.com"><link rel="stylesheet" href="/styles.css?v=12.21.0">
+<style>
+.vid-section{margin-top:22px}
+.vid-section-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.vid-section-head h2{margin:0;font-size:1.15rem}
+.vid-section-head .count{color:#5d6b85;font-weight:700;font-size:.85rem}
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.vid-card{background:#fff;border:1px solid #e3e8f2;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.vid-thumb{position:relative;display:block;aspect-ratio:16/9;background:#edf2f8;overflow:hidden}
+.vid-thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .15s ease}
+.vid-thumb.preview-loaded img{opacity:1}
+.vid-preview-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;color:#405370;background:#edf2f8;font-size:.9rem;font-weight:650}
+.vid-thumb.preview-loaded .vid-preview-status{display:none}
+.vid-thumb .play{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:2.4rem;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.65);background:linear-gradient(transparent,rgba(0,0,0,.08))}
+.vid-thumb.preview-loaded .play{display:flex}
+.vid-body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.vid-body h3{margin:0;font-size:1.03rem}
+.vid-desc{color:#374766;line-height:1.6;font-size:.92rem}
+.vid-desc p{margin:0 0 .6em}
+.vid-desc:last-child p:last-child{margin-bottom:0}
+.vid-body .btn{align-self:flex-start;margin-top:auto}
+.vid-empty{padding:40px 18px;text-align:center}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body><div class="network-banner" id="networkBanner"></div>
+<div id="shell"><div class="main"><div class="topbar"><div class="page-title"><span class="ic">🎬</span> Video Lessons</div><div class="topbar-right"><span class="who" id="who"></span><button class="btn light" onclick="GB.logout()">Log out</button></div></div>
+<div class="content">
+  <p class="muted">Browse video lessons by subject. Each entry has a short description and opens the video on YouTube.</p>
+  <div class="field full" style="margin:12px 0"><label for="videoSearch">Search video lessons</label><input id="videoSearch" type="search" maxlength="120" placeholder="Search by title, subject, description or YouTube link…" autocomplete="off"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="out"><p class="muted">Loading video lessons…</p></div>
+</div></div></div>
+<script src="/app.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/gb-ui.js?v=12.21.0"></script>
+<script>
+if(!GB.token()) location="/login.html";
+GBUI.mount({active:"/videos.html"});
+window.addEventListener("gb-subject-icons",()=>{if(typeof render==="function")render()});
+const $=id=>document.getElementById(id);
+const esc=GBUI.esc;
+let videos=[], current=new URLSearchParams(location.search).get("subject")||"All", searchTerm=new URLSearchParams(location.search).get("search")||"";
+
+function youtubeId(value){
+  // Accept standard YouTube shares (including extra query parameters), Shorts,
+  // Live and embed URLs. Never treat non-YouTube hosts as trusted video IDs.
+  const raw=String(value||"").trim().replace(/&amp;/gi,"&");
+  try{
+    const url=new URL(raw,location.href);
+    const host=url.hostname.toLowerCase().replace(/^www\./,"").replace(/^m\./,"");
+    const allowed=["youtube.com","youtube-nocookie.com","music.youtube.com","youtu.be"];
+    if(!allowed.includes(host))return "";
+    const path=url.pathname.split("/").filter(Boolean);
+    const id=host==="youtu.be"?path[0]
+      :url.searchParams.get("v")||(["embed","shorts","live","v"].includes(path[0])?path[1]:"");
+    return /^[A-Za-z0-9_-]{11}$/.test(id||"")?id:"";
+  }catch{return "";}
+}
+
+function thumbnailSources(id){
+  // Each item is the real video's YouTube thumbnail, never a logo or subject artwork.
+  return [
+    `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+    `https://i1.ytimg.com/vi/${id}/hqdefault.jpg`,
+    `/api/video-thumbnail/${id}` // Same-origin proxy when a mobile network blocks YouTube's image CDN.
+  ];
+}
+
+function updateUrl(){
+  const q=new URLSearchParams();
+  if(current&&current!=="All") q.set("subject",current);
+  if(searchTerm.trim()) q.set("search",searchTerm.trim());
+  history.replaceState(null,"",q.toString()?`?${q}`:location.pathname);
+}
+
+function renderTabs(){
+  const subjects=["All",...GBUI.mySubjects()];
+  $("tabs").innerHTML=subjects.map(subject=>{
+    const n=videos.filter(v=>(subject==="All"||v.subject===subject)&&matchesSearch(v)).length;
+    return `<button class="tab ${subject===current?"on":""}" type="button" data-tab="${esc(subject)}">${esc(subject)} <span class="count">${n}</span></button>`;
+  }).join("");
+}
+
+function matchesSearch(v){
+  const q=searchTerm.trim().toLowerCase();
+  if(!q)return true;
+  const description=String(v.description||"").replace(/<[^>]*>/g," ");
+  return [v.title,v.subject,description,v.youtubeUrl].some(value=>String(value||"").toLowerCase().includes(q));
+}
+
+function videoCard(v,index=0){
+  const id=youtubeId(v.youtubeUrl);
+  const thumb=id?`<img src="${thumbnailSources(id)[0]}" data-video-id="${id}" data-thumb-step="0" alt="YouTube thumbnail for ${esc(v.title)}" loading="${index<4?"eager":"lazy"}" decoding="async" referrerpolicy="no-referrer">`
+    :"";
+  const status=id?"Loading YouTube thumbnail…":"No valid YouTube video ID in this link. Open on YouTube.";
+  return `<article class="vid-card">
+    <a class="vid-thumb" href="${esc(v.youtubeUrl)}" target="_blank" rel="noopener noreferrer">${thumb}<span class="vid-preview-status">${status}</span><span class="play" aria-hidden="true">▶</span></a>
+    <div class="vid-body">
+      <h3>${esc(v.title)}</h3>
+      <div class="vid-desc">${v.description||"<p class='muted'>No description provided for this video yet.</p>"}</div>
+      <a class="btn primary" href="${esc(v.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
+    </div>
+  </article>`;
+}
+
+// Image "error" does not bubble. Capture it to try the other genuine
+// thumbnail endpoints without replacing the video artwork with a random logo.
+$("out").addEventListener("error",event=>{
+  const image=event.target;
+  if(!image.matches?.("img[data-video-id]"))return;
+  const sources=thumbnailSources(image.dataset.videoId);
+  const next=Number(image.dataset.thumbStep||0)+1;
+  if(next<sources.length){
+    image.dataset.thumbStep=String(next);
+    image.src=sources[next];
+  }else{
+    const status=image.parentElement?.querySelector(".vid-preview-status");
+    image.remove();
+    if(status)status.textContent="Video thumbnail could not load. Tap to watch on YouTube.";
+  }
+},true);
+$("out").addEventListener("load",event=>{
+  const image=event.target;
+  if(image.matches?.("img[data-video-id]"))image.parentElement?.classList.add("preview-loaded");
+},true);
+
+function render(){
+  renderTabs();
+  const relevant=videos.filter(v=>(current==="All"||v.subject===current)&&matchesSearch(v));
+  if(!relevant.length){
+    $("out").innerHTML=`<div class="card vid-empty"><p class="muted">${searchTerm.trim()?"No video lessons match your search.":`No video lessons have been published${current==="All"?"":" for "+esc(current)} yet. Please check back soon.`}</p></div>`;
+    return;
+  }
+  if(current!=="All"){
+    $("out").innerHTML=`<div class="vid-grid">${relevant.map(videoCard).join("")}</div>`;
+    return;
+  }
+  const bySubject=new Map();
+  for(const v of relevant){
+    if(!bySubject.has(v.subject)) bySubject.set(v.subject,[]);
+    bySubject.get(v.subject).push(v);
+  }
+  $("out").innerHTML=[...bySubject.entries()].map(([subject,rows])=>`
+    <section class="vid-section">
+      <div class="vid-section-head"><h2>${GBUI.SUBJECT_ICONS[subject]||"📗"} ${esc(subject)}</h2><span class="count">${rows.length} video${rows.length===1?"":"s"}</span></div>
+      <div class="vid-grid">${rows.map(videoCard).join("")}</div>
+    </section>`).join("");
+}
+
+$("tabs").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-tab]");
+  if(!btn) return;
+  current=btn.dataset.tab;
+  updateUrl();
+  render();
+});
+
+$("videoSearch").value=searchTerm;
+let videoSearchTimer;
+$("videoSearch").addEventListener("input",e=>{searchTerm=e.target.value;clearTimeout(videoSearchTimer);videoSearchTimer=setTimeout(()=>{updateUrl();render()},140)});
+
+async function load(){
+  try{
+    videos=await GB.api("/api/videos");
+    render();
+  }catch(e){
+    $("out").innerHTML=`<p class="error">${esc(e.message)}</p>`;
+  }
+}
+load();
+</script>
+</body>
+</html>

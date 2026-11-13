@@ -1,0 +1,153 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d2a5c"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/assets/favicon.ico"><link rel="apple-touch-icon" href="/assets/icon-192.png"><title>CBT Tests • Gifted Brainz Tutorial</title><link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="stylesheet" href="/premium-access.css"><link rel="stylesheet" href="/learning-spaces.css">
+<link rel="stylesheet" href="/cbt-cards.css?v=12.21.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body><div class="network-banner" id="networkBanner"></div>
+<div id="shell"><div class="main"><div class="topbar"><div class="page-title"><span class="ic">📝</span> CBT Tests</div><div class="topbar-right"><span class="who" id="who"></span><button class="btn light" onclick="GB.logout()">Log out</button></div></div>
+<div class="content">
+  <section class="cbt-page-intro" aria-label="CBT test library introduction">
+    <div class="cbt-page-heading">
+      <div class="cbt-intro-label">CBT Practice Library</div>
+      <h1>Practise with purpose.<br>Prepare with confidence.</h1>
+      <p>Find an assessment for your subject and continue in Gifted Brainz Assessment Hub.</p>
+      <div class="cbt-overview-stats"><span class="cbt-overview-stat"><strong id="cbtTestCount">—</strong> Published tests</span><span class="cbt-overview-stat"><strong id="cbtSubjectCount">—</strong> Subjects</span></div>
+    </div>
+    <svg class="cbt-intro-art" viewBox="0 0 140 160" aria-hidden="true"><rect x="23" y="24" width="94" height="117" rx="15" fill="#071e3b" opacity=".4"/><rect x="14" y="13" width="94" height="117" rx="15" fill="#fff"/><rect x="28" y="28" width="38" height="5" rx="2.5" fill="#143d6c"/><rect x="28" y="40" width="57" height="4" rx="2" fill="#aec5db"/><rect x="28" y="63" width="12" height="12" rx="4" fill="#e8f3fd" stroke="#a6bed7"/><path d="m31 69 3 3 6-8" stroke="#ba8e40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="47" y="66" width="40" height="5" rx="2.5" fill="#b9cede"/><rect x="28" y="90" width="12" height="12" rx="4" fill="#e8f3fd" stroke="#a6bed7"/><path d="m31 96 3 3 6-8" stroke="#ba8e40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="47" y="93" width="31" height="5" rx="2.5" fill="#b9cede"/><circle cx="104" cy="119" r="26" fill="#eec976" stroke="#fff" stroke-width="5"/><circle cx="104" cy="119" r="13" fill="none" stroke="#183b61" stroke-width="2"/><path d="M104 109v11l6 4" stroke="#183b61" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+  </section>
+  <div class="cbt-tools"><div class="field full cbt-search-field"><label for="testSearch">Find a CBT test</label><div class="cbt-search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="testSearch" type="search" maxlength="120" placeholder="Search tests or subjects…" autocomplete="off"></div></div><span class="cbt-tools-hint">Choose a subject below to refine your results</span></div>
+  <div id="spaceChooser" role="navigation" aria-label="Learning spaces"></div>
+  <div class="tabs cbt-tabs" id="tabs" aria-label="Filter CBT tests by subject"></div>
+  <div id="out"><p class="muted">Loading your CBT library…</p></div>
+</div></div></div>
+<script src="/learning-spaces.js"></script><script src="/premium-access.js?v=12.21.0"></script><script src="/app.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/gb-ui.js?v=12.21.0"></script>
+<script>
+if(!GB.token()) location="/login.html";
+GBUI.mount({active:"/cbt.html"});
+window.addEventListener("gb-subject-icons",()=>{if(typeof render==="function")render()});
+const $=id=>document.getElementById(id);
+const esc=GBUI.esc;
+let tests=[], current=new URLSearchParams(location.search).get("subject")||"All", searchTerm=new URLSearchParams(location.search).get("search")||"";
+
+function updateUrl(){
+  const q=new URLSearchParams();
+  if(GBLearningSpaces.space==="premium") q.set("space","premium");
+  if(current&&current!=="All") q.set("subject",current);
+  if(searchTerm.trim()) q.set("search",searchTerm.trim());
+  history.replaceState(null,"",q.toString()?`?${q}`:location.pathname);
+}
+
+function renderTabs(){
+  const subjects=["All",...GBUI.mySubjects()];
+  $("tabs").innerHTML=subjects.map(subject=>{
+    const n=tests.filter(t=>(subject==="All"||t.subject===subject)&&matchesSearch(t)).length;
+    return `<button class="tab ${subject===current?"on":""}" type="button" data-tab="${esc(subject)}">${esc(subject)} <span class="count">${n}</span></button>`;
+  }).join("");
+}
+
+function matchesSearch(t){
+  const q=searchTerm.trim().toLowerCase();
+  if(!q)return true;
+  const writeup=String(t.writeup||"").replace(/<[^>]*>/g," ");
+  return [t.title,t.subject,t.linkLabel,writeup].some(v=>String(v||"").toLowerCase().includes(q));
+}
+
+function testUrl(value){
+  try{
+    const raw=String(value||"").trim();
+    if(!raw)return "";
+    const url=/^[a-z][a-z0-9+.-]*:/i.test(raw)?new URL(raw):new URL(raw,location.href);
+    return ["http:","https:"].includes(url.protocol)?url.href:"";
+  }catch{return ""}
+}
+function plainDescription(value){
+  return String(value||"").replace(/<(?:script|style)[^>]*>[\s\S]*?<\/(?:script|style)\s*>/gi," ")
+    .replace(/<[^>]*>/g," ")
+    .replace(/&(?:nbsp|amp|lt|gt|quot|#39);/gi,x=>({"&nbsp;":" ","&amp;":"&","&lt;":"<","&gt;":">","&quot;":"\"","&#39;":"'"}[x.toLowerCase()]||x))
+    .replace(/\s+/g," ").trim();
+}
+function subjectVariant(subject){
+  let hash=0;
+  for(const ch of String(subject||"")) hash=((hash*31)+ch.charCodeAt(0))>>>0;
+  return hash%4;
+}
+function testCard(t){
+  const locked=!!t.locked;
+  const subject=String(t.subject||"General");
+  const icon=esc(GBUI.SUBJECT_ICONS[subject]||"📘");
+  const href=testUrl(t.linkUrl);
+  const performanceHref=testUrl(t.performanceUrl);
+  const performanceAction=!locked&&performanceHref?`<a class="cbt-card-action cbt-card-performance" href="${esc(performanceHref)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(t.performanceLabel||"Check Performance")}: ${esc(t.title)} (opens in a new tab)"><span>${esc(t.performanceLabel||"Check Performance")}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 16v-5m5 5V6m5 10V9"/></svg></a>`:"";
+  const action=locked
+    ? `<button class="cbt-card-action" type="button" data-cbt-premium="${esc(t.id)}"><span>Unlock this test</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></button>`
+    : href ? `<a class="cbt-card-action" href="${esc(href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(t.linkLabel||"Open CBT test")}: ${esc(t.title)} (opens in a new tab)"><span>${esc(t.linkLabel||"Start Assessment")}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>`
+      : `<span class="cbt-card-action cbt-card-action-unavailable">Test link unavailable</span>`;
+  const description=plainDescription(t.writeup)||"Review the assessment details and put your knowledge to the test.";
+  return `<article class="cbt-card ${locked?"cbt-card-locked":""}" data-variant="0">
+    <div class="cbt-card-cover">
+      <div class="cbt-cover-top"><span class="cbt-cover-brand">Gifted Brainz · CBT</span><span class="cbt-cover-access ${locked?"locked":""}">${locked?"🔒 PREMIUM":"AVAILABLE"}</span></div>
+      <div class="cbt-cover-main"><div class="cbt-cover-subject"><span class="cbt-cover-icon" aria-hidden="true">${icon}</span><span class="cbt-cover-subject-name">${esc(subject)}</span></div></div>
+      <div class="cbt-cover-footnote">Study • Practise • Improve</div>
+    </div>
+    <div class="cbt-card-body">
+      <div class="cbt-card-eyebrow"><span class="cbt-card-type">CBT Assessment</span><span class="cbt-card-kind">External test</span></div>
+      <h3>${esc(t.title)}</h3>
+
+      <p class="cbt-description" title="${esc(description)}">${esc(description)}</p>
+      <div class="cbt-card-footer"><div class="cbt-access-note"><span aria-hidden="true">${locked?"🔒":"✓"}</span>${locked?"Activated account required":"Ready to open in Assessment Hub"}</div>${action}${performanceAction}</div>
+    </div>
+  </article>`;
+}
+
+function render(){
+  $("cbtTestCount").textContent=String(tests.length);
+  $("cbtSubjectCount").textContent=String(new Set(tests.map(t=>t.subject).filter(Boolean)).size);
+  renderTabs();
+  const relevant=tests.filter(t=>(current==="All"||t.subject===current)&&matchesSearch(t));
+  if(!relevant.length){
+    $("out").innerHTML=`<div class="card cbt-empty"><p class="muted">${searchTerm.trim()?"No CBT tests match your search.":`No CBT tests have been published${current==="All"?"":" for "+esc(current)} yet. Please check back soon.`}</p></div>`;
+    return;
+  }
+  const ordered=current==="All"
+    ? [...relevant].sort((a,b)=>String(a.subject||"").localeCompare(String(b.subject||""))||String(a.title||"").localeCompare(String(b.title||"")))
+    : relevant;
+  const subjectLabel=current==="All"?"All CBT tests":current;
+  const subjectIcon=current==="All"?"📝":GBUI.SUBJECT_ICONS[current]||"📗";
+  $("out").innerHTML=`<section class="cbt-section">
+    <div class="cbt-section-head"><h2>${esc(subjectIcon)} ${esc(subjectLabel)}</h2><span class="count">${ordered.length} test${ordered.length===1?"":"s"}</span></div>
+    <div class="cbt-grid">${ordered.map(testCard).join("")}</div>
+  </section>`;
+}
+
+$("tabs").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-tab]");
+  if(!btn) return;
+  current=btn.dataset.tab;
+  updateUrl();
+  render();
+});
+
+document.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-cbt-premium]");
+  if(!btn)return;
+  const t=tests.find(row=>String(row.id)===String(btn.dataset.cbtPremium));
+  if(t?.locked) GBPremium.show("CBT test",t.title);
+});
+$("testSearch").value=searchTerm;
+$("testSearch").addEventListener("input",e=>{searchTerm=e.target.value;updateUrl();render()});
+
+async function load(){
+  try{
+    tests=await GB.api("/api/cbt-tests?space="+GBLearningSpaces.space);
+    render();
+  }catch(e){
+    $("out").innerHTML=`<p class="error">${esc(e.message)}</p>`;
+  }
+}
+GBLearningSpaces.init({onChange:load}).then(load);
+</script>
+</body>
+</html>

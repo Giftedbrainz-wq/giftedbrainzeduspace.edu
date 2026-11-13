@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d2a5c"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/assets/favicon.ico"><link rel="apple-touch-icon" href="/assets/icon-192.png"><title>Join Gifted Brainz Tutorial</title><link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body><div class="network-banner" id="networkBanner"></div>
+<div class="formbox">
+  <div class="backnav"><a class="btn light" href="/">← Back to Home</a></div>
+  <img class="logo-full" src="/assets/logo-full.png" alt="Gifted Brainz Tutorial">
+  <h1>Create Student Account</h1>
+  <p class="muted">Create your free Gifted Brainz account and start learning immediately.</p>
+  <div class="notice">✅ Your account will be available immediately. You can upgrade to Activated access later.</div>
+  <form id="f">
+    <div class="field"><label>Full name</label><input id="name" required maxlength="120"></div>
+    <div class="field"><label>Email</label><input id="email" type="email" autocomplete="email" required maxlength="160"></div>
+    <div class="field"><label>WhatsApp number</label><input id="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="+2348012345678"><small class="muted">Enter the number connected to WhatsApp, including your country code.</small></div>
+    <div class="field"><label>Username</label><input id="username" type="text" autocomplete="username" required maxlength="80"></div>
+    <div class="field"><label>Password</label><input id="password" type="password" autocomplete="new-password" minlength="8" required maxlength="200"><small class="muted">At least 8 characters. Keep it safe — an admin can reset it for you if you forget.</small></div>
+    <div class="field full"><label>Choose your subjects</label><div class="notice"><b>Use of English is compulsory.</b> Select up to 3 additional subjects. Maximum: 4 subjects total.</div>
+      <div class="subject-select-grid">
+        <label class="subject-choice"><input type="checkbox" name="subjects" value="Use of English" checked disabled> <span>📘 Use of English <small>Compulsory</small></span></label>
+        <label class="subject-choice"><input type="checkbox" name="subjects" value="Mathematics"> <span>➗ Mathematics</span></label>
+        <label class="subject-choice"><input type="checkbox" name="subjects" value="Physics"> <span>⚡ Physics</span></label>
+        <label class="subject-choice"><input type="checkbox" name="subjects" value="Chemistry"> <span>🧪 Chemistry</span></label>
+        <label class="subject-choice"><input type="checkbox" name="subjects" value="Biology"> <span>🌿 Biology</span></label>
+      </div><small id="subjectCount" class="muted">1 of 4 subjects selected</small>
+    </div>
+    <div class="field full"><label>Choose your profile avatar</label><div class="avatar-picker" id="registerAvatars" role="radiogroup" aria-label="Profile avatar"></div></div>
+    <button class="btn primary" type="submit" style="width:100%" id="go">Create Account</button>
+  </form>
+  <div id="done" hidden></div>
+<p id="msg"></p>
+  <a class="btn light" style="width:100%;margin-top:10px" href="/login.html">← Back to Login</a>
+  <p class="muted" style="text-align:center;margin:12px 0 0;font-size:.84rem">Trouble registering? <a href="/help.html">Help &amp; Support</a></p>
+</div>
+<script src="/app.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/auth-forms.js?v=12.21.0"></script></body></html>

@@ -1,0 +1,10 @@
+window.GBStudy=(()=>{'use strict';
+ const esc=s=>window.GBUI.esc(s??'');
+ const avatar=v=>/^custom-[a-f0-9-]{36}$/.test(String(v||''))?'/api/profile-photo/'+v.slice(7):'/assets/avatars/'+(/^scholar-(0[1-9]|1\d|2[0-4])$/.test(String(v||''))?v:'scholar-01')+'.png';
+ const when=value=>{const d=new Date(value);return isNaN(d)?'':d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});};
+ const dateLabel=value=>{const d=new Date(value),today=new Date(),previous=new Date();previous.setDate(previous.getDate()-1);if(d.toDateString()===today.toDateString())return 'Today';if(d.toDateString()===previous.toDateString())return 'Yesterday';return d.toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'});};
+ const api=(path,method='GET',data)=>GB.api('/api/learning/'+path,{method,...(data===undefined?{}:{headers:{'content-type':'application/json'},body:JSON.stringify(data)})});
+ const me=()=>{try{return JSON.parse(localStorage.getItem('gbUser')||sessionStorage.getItem('gbUser')||'{}')}catch{return {}}};
+ const status=(node,text,error=false)=>{if(node){node.textContent=text||'';node.classList.toggle('error',!!error)}};
+ return {esc,avatar,when,dateLabel,api,me,status};
+})();

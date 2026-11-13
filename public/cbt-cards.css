@@ -1,0 +1,91 @@
+/* Gifted Brainz EduSpace — curated CBT test card design (v12.5.1).
+   Independent of the external Assessment Hub test interface. */
+.cbt-page-intro{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:clamp(20px,4vw,31px);background:linear-gradient(115deg,#102d54 0%,#154276 75%,#1b5289 100%);border:1px solid #214f80;border-radius:22px;color:#fff;box-shadow:0 11px 30px rgba(14,46,87,.12)}
+.cbt-page-intro:before{content:"";position:absolute;inset:auto -45px -95px auto;width:280px;height:280px;border:1px solid rgba(237,191,104,.25);border-radius:50%;z-index:-1}
+.cbt-page-intro:after{content:"";position:absolute;inset:32px -50px auto auto;width:200px;height:200px;border:1px solid rgba(255,255,255,.10);border-radius:50%;z-index:-1}
+.cbt-page-heading{min-width:0;max-width:630px}
+.cbt-intro-label{display:inline-flex;align-items:center;gap:9px;font-size:.71rem;font-weight:900;letter-spacing:.12em;color:#f7d38a;text-transform:uppercase}
+.cbt-intro-label:before{content:"";width:24px;height:2px;background:#f4cd81;border-radius:10px}
+.cbt-page-intro h1{color:#fff;font-size:clamp(1.48rem,3vw,2.1rem);letter-spacing:-.035em;line-height:1.17;margin:12px 0 10px;font-weight:900}
+.cbt-page-intro p{margin:0;max-width:570px;color:#d6e4f4;line-height:1.58;font-size:.94rem}
+.cbt-overview-stats{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.cbt-overview-stat{display:flex;align-items:baseline;gap:8px;padding:8px 12px;border-radius:11px;background:#ffffff13;border:1px solid #ffffff29;color:#f0f5fc;font-size:.75rem;font-weight:700}
+.cbt-overview-stat strong{font-size:1.08rem;color:#fff;font-weight:900;font-variant-numeric:tabular-nums}
+.cbt-intro-art{width:130px;flex:0 0 130px;opacity:.98;filter:drop-shadow(0 10px 19px rgba(0,0,0,.2))}
+.cbt-tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:13px;margin-top:1px}
+.cbt-search-field{flex:1 1 290px;margin:0;max-width:640px}
+.cbt-search-field label{font-size:.84rem;color:#354b65;margin-bottom:8px}
+.cbt-search-wrap{position:relative}
+.cbt-search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:19px;height:19px;fill:none;stroke:#6b7f98;stroke-width:2;pointer-events:none}
+.cbt-search-wrap input{width:100%;min-height:49px;padding:12px 13px 12px 43px;border-radius:13px;border:1px solid #d9e2ed;background:#fff;box-shadow:0 2px 4px rgba(21,47,80,.025);font:inherit;color:#1e3454}
+.cbt-search-wrap input:focus-visible{outline:3px solid #c7dafa;outline-offset:1px;border-color:#34659c}
+.cbt-tools-hint{padding-bottom:11px;color:#687d94;font-size:.8rem;font-weight:650;white-space:nowrap}
+.cbt-tabs{padding:2px 0;gap:8px}
+.cbt-tabs .tab{font-size:.84rem;font-weight:780;padding:9px 13px;transition:background .18s,border-color .18s}
+.cbt-tabs .tab.on{background:#0f3769;border-color:#0f3769;box-shadow:0 4px 13px rgba(15,55,105,.13)}
+.cbt-section{margin:4px 0 13px}
+.cbt-section-head{display:flex;align-items:center;gap:11px;margin:0 0 15px;padding-bottom:12px;border-bottom:1px solid #e4ebf3}
+.cbt-section-head h2{margin:0;font-size:1.15rem;letter-spacing:-.025em;color:#1b304c;font-weight:860}
+.cbt-section-head .count{font-size:.78rem;background:#e9eff7;border-radius:999px;padding:5px 10px;font-weight:770;color:#3a5474}
+.cbt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,275px),1fr));gap:17px;align-items:stretch}
+.cbt-card{background:#fff;border:1px solid #dfe7f0;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;min-width:0;box-shadow:0 5px 16px rgba(12,39,76,.055);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cbt-card:focus-within{border-color:#c49436;box-shadow:0 0 0 3px #c4943624}
+@media(hover:hover) and (pointer:fine){.cbt-card:hover{transform:translateY(-4px);box-shadow:0 15px 30px rgba(12,39,76,.12);border-color:#b8cadf}}
+.cbt-card-cover{--cbt-cover-start:#0d2d58;--cbt-cover-end:#21568b;position:relative;isolation:isolate;min-height:156px;padding:15px 17px;display:flex;flex-direction:column;justify-content:space-between;gap:7px;overflow:hidden;background:linear-gradient(126deg,var(--cbt-cover-start),var(--cbt-cover-end));color:#fff}
+.cbt-card[data-variant="1"] .cbt-card-cover{--cbt-cover-start:#12314d;--cbt-cover-end:#27647b}
+.cbt-card[data-variant="2"] .cbt-card-cover{--cbt-cover-start:#1e315a;--cbt-cover-end:#315b8c}
+.cbt-card[data-variant="3"] .cbt-card-cover{--cbt-cover-start:#132e53;--cbt-cover-end:#41709b}
+.cbt-card-cover:after{content:"";position:absolute;width:185px;height:185px;right:-62px;top:18px;z-index:-1;border:1px solid rgba(248,221,163,.3);border-radius:50%;box-shadow:0 0 0 30px #ffffff05,0 0 0 62px #ffffff04}
+.cbt-cover-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cbt-cover-brand{font-size:.60rem;letter-spacing:.14em;font-weight:900;color:#f9db9f;text-transform:uppercase}
+.cbt-cover-access{font-weight:850;font-size:.61rem;letter-spacing:.055em;padding:5px 8px;border-radius:999px;border:1px solid #ffffff4b;background:#ffffff1e;color:#fff;white-space:nowrap}
+.cbt-cover-access.locked{background:#f1c879;color:#233349;border-color:#f1c879}
+.cbt-cover-main{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:93px}
+.cbt-cover-subject{display:flex;flex-direction:column;gap:7px;min-width:0;max-width:54%;padding-bottom:4px}
+.cbt-cover-icon{display:grid;place-items:center;width:47px;height:47px;border:1px solid #ffffff50;background:#ffffff1c;border-radius:13px;font-size:1.65rem;line-height:1}
+.cbt-cover-subject-name{font-weight:830;font-size:.93rem;line-height:1.23;overflow-wrap:anywhere}
+.cbt-cover-illustration{width:min(44%,146px);max-height:111px;flex:none;filter:drop-shadow(0 8px 8px #00183530)}
+.cbt-cover-footnote{font-size:.63rem;letter-spacing:.075em;font-weight:760;text-transform:uppercase;color:#e2ebf5;opacity:.83}
+.cbt-card-body{padding:18px;display:flex;flex:1;flex-direction:column;gap:10px}
+.cbt-card-eyebrow{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap}
+.cbt-card-type{font-weight:850;font-size:.67rem;letter-spacing:.09em;text-transform:uppercase;color:#54728f}
+.cbt-card-kind{font-size:.71rem;font-weight:740;color:#42658a;background:#eef5fc;border:1px solid #e3edf7;padding:5px 8px;border-radius:99px}
+.cbt-card h3{font-size:1.08rem;line-height:1.35;letter-spacing:-.02em;color:#19314f;font-weight:860;margin:0;overflow-wrap:anywhere}
+.cbt-description{font-size:.88rem;line-height:1.55;color:#526780;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;min-height:1.5em}
+.cbt-card-footer{margin-top:auto;padding-top:14px;border-top:1px solid #edf0f4;display:flex;flex-direction:column;gap:12px}
+.cbt-access-note{display:flex;align-items:center;gap:7px;font-size:.76rem;font-weight:760;color:#3a6c5b}
+.cbt-card-locked .cbt-access-note{color:#93641e}
+.cbt-card-action{min-height:45px;width:100%;align-self:stretch;display:flex;align-items:center;justify-content:space-between;gap:8px;background:#103866;color:#fff;border:1px solid #103866;border-radius:11px;padding:10px 13px;text-decoration:none;font-size:.85rem;font-weight:840;cursor:pointer;transition:background .18s ease,transform .18s ease}
+.cbt-card-action:hover{background:#1b538b;border-color:#1b538b;color:#fff}
+.cbt-card-action:focus-visible{outline:3px solid #dcb65e;outline-offset:2px}
+.cbt-card-action svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cbt-card-locked .cbt-card-action{background:#fff8e8;color:#71521d;border-color:#ead19f}
+.cbt-card-locked .cbt-card-action:hover{background:#ffefd0;border-color:#d6ae62}
+.cbt-card-action-unavailable{background:#edf1f6;border-color:#edf1f6;color:#6c7989;cursor:not-allowed}
+.cbt-empty{padding:42px 18px;text-align:center}
+@media(max-width:700px){.cbt-page-intro{padding:21px;border-radius:17px}.cbt-intro-art{width:83px;flex-basis:83px;align-self:flex-start}.cbt-page-intro h1{font-size:1.55rem}.cbt-grid{gap:13px}.cbt-tools-hint{display:none}.cbt-card-body{padding:16px}}
+@media(max-width:440px){.cbt-intro-art{width:66px;flex-basis:66px}.cbt-page-intro{gap:8px}.cbt-overview-stats{gap:7px}.cbt-overview-stat{padding:7px 9px}.cbt-card-cover{min-height:150px}}
+@media(prefers-reduced-motion:reduce){.cbt-card,.cbt-card-action,.cbt-tabs .tab{transition:none!important}.cbt-card:hover{transform:none}}
+
+/* Optional second destination: assessment performance page. */
+.cbt-card-performance{background:#fff;color:#143e72;border-color:#b4cbe1;box-shadow:none}
+.cbt-card-performance:hover{background:#eef5fc;border-color:#6289b3;color:#143e72}
+.cbt-card-footer:has(.cbt-card-performance){gap:9px}
+
+/* 12.6: premium editorial assessment covers; understated technical line art. */
+.cbt-subject-art{display:block;width:min(47%,150px);height:114px;object-fit:contain;opacity:.98;filter:drop-shadow(0 6px 8px rgba(0,0,0,.12))}
+.cbt-card-cover{background-image:radial-gradient(ellipse at 82% 63%,#4975a75c 0,transparent 57%),linear-gradient(123deg,var(--cbt-cover-start),var(--cbt-cover-end));min-height:169px}
+.cbt-cover-main{min-height:100px}.cbt-cover-brand{letter-spacing:.16em}.cbt-card{border-color:#d7e0eb;box-shadow:0 9px 20px rgba(12,39,76,.06)}
+@media(prefers-reduced-motion:reduce){.cbt-card{transition:none}}
+
+/* 12.7.1: subject icon + clean, consistent EduSpace blue; no badges or cover logos. */
+.cbt-card-cover,.cbt-card[data-variant="1"] .cbt-card-cover,.cbt-card[data-variant="2"] .cbt-card-cover,.cbt-card[data-variant="3"] .cbt-card-cover{
+ --cbt-cover-start:#0b2d5c;--cbt-cover-end:#1b5289;
+ background:linear-gradient(126deg,#0b2d5c,#1b5289);
+}
+.cbt-cover-main{justify-content:flex-start}
+.cbt-cover-subject{max-width:100%;flex-direction:row;align-items:center;gap:13px}
+.cbt-cover-icon{font-size:1.65rem;width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;background:#ffffff1c;border:1px solid #ffffff47;border-radius:12px}
+.cbt-cover-subject-name{font-size:1.06rem}
+.cbt-subject-art{display:none!important}
+.cbt-tabs .tab.on{background:#0b2d5c;border-color:#0b2d5c}

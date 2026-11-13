@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#082d63">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.ico">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<title>Announcements • Gifted Brainz Tutorial</title>
+<link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<style>
+.announcement-thread{margin-top:16px;padding-top:12px;border-top:1px solid #e1e7f0}.announcement-thread h4{margin:5px 0 12px}.announcement-replies{display:grid;gap:8px;max-height:440px;overflow:auto}.announcement-reply{padding:11px 13px;background:#f4f7fc;border:1px solid #e5ebf3;border-radius:12px;overflow-wrap:anywhere}.announcement-reply-top{display:flex;gap:12px;align-items:center;justify-content:space-between}.announcement-reply-top small{color:#667085}.announcement-reply p{margin:6px 0 0;white-space:pre-wrap;line-height:1.4}.announcement-reply-form{display:flex;gap:9px;margin-top:11px}.announcement-reply-form input{flex:1;min-width:0;background:white;border:1px solid #cdd8e8;border-radius:10px;padding:11px;font:inherit;color:#142642}@media(max-width:540px){.announcement-reply-form{display:grid;grid-template-columns:minmax(0,1fr) auto}.announcement-reply-form button{width:auto}}
+
+.announcement-reply{position:relative}.announcement-reply.is-thread-reply{border-left:2px solid #bacbe0;margin-top:2px}
+.announcement-reply.is-thread-reply:before{content:'';position:absolute;left:-17px;top:-10px;width:16px;height:26px;border-left:2px solid #c3d1e2;border-bottom:2px solid #c3d1e2;border-bottom-left-radius:12px;pointer-events:none}
+.announcement-reply-actions{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.announcement-reply-actions button{border:0;background:transparent;cursor:pointer;color:#48627e;font:inherit;font-size:.82rem;font-weight:750;padding:5px 8px;border-radius:8px}
+.announcement-reply-actions [data-like-reply]{font-size:1.13rem;min-width:57px;min-height:36px;color:#7c8ba1}
+.announcement-reply-actions [data-like-reply][aria-pressed="true"]{color:#da2941;font-weight:850}
+.announcement-reply-actions .reply-delete{color:#aa4653}
+@media(max-width:560px){.announcement-reply-actions [data-like-reply]{font-size:1.24rem}.announcement-reply{padding:10px 12px}}
+</style><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body>
+<div class="network-banner" id="networkBanner"></div>
+<div id="shell">
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><span class="ic">📢</span> Announcements</div>
+      <div class="topbar-right"><span class="who" id="who"></span><button class="btn light" onclick="GB.logout()">Log out</button></div>
+    </div>
+    <div class="content">
+      <p class="muted">Notices from your tutors. Links are clickable, and pictures or videos play right here.</p>
+      <div id="out"><p class="muted">Loading announcements…</p></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><script src="/app.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/gb-ui.js?v=12.21.0"></script>
+<script>
+if(!GB.token()) location="/login.html";
+GBUI.mount({active:"/announcements.html"});
+const $=id=>document.getElementById(id);
+
+const when=a=>{const d=new Date(a.createdAt||Date.now());return isNaN(d)?"":d.toLocaleString(undefined,{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})};
+
+function replyCard(r,announcementId,depth=0){const myId=GB.user?.()?.id||JSON.parse(localStorage.getItem("gbUser")||sessionStorage.getItem("gbUser")||"{}").id;return `<div class="announcement-reply ${depth?'is-thread-reply':''}" style="margin-left:${Math.min(depth,1)*17}px"><div class="announcement-reply-top"><strong>${GBUI.esc(r.name||'Student')}</strong><small>${when(r)}</small></div><p>${GBUI.esc(r.message||'')}</p><div class="announcement-reply-actions"><button type="button" data-like-reply="${GBUI.esc(r.id)}" data-ann="${GBUI.esc(announcementId)}" aria-pressed="${(r.likes||[]).includes(myId)}">${r.likes?.includes(myId)?'♥':'♡'} ${Number((r.likes||[]).length)}</button><button type="button" data-thread-reply="${GBUI.esc(r.id)}" data-ann="${GBUI.esc(announcementId)}">↩ Reply</button>${String(r.userId||'')===String(myId)?`<button type="button" class="reply-delete" data-delete-reply="${GBUI.esc(r.id)}" data-ann="${GBUI.esc(announcementId)}">Delete</button>`:''}</div></div>`;}
+function replyTree(replies,announcementId){const byParent=new Map();for(const r of replies){const parent=r.parentId||'';if(!byParent.has(parent))byParent.set(parent,[]);byParent.get(parent).push(r);}const seen=new Set();function renderBranch(parent,depth){return (byParent.get(parent)||[]).map(r=>{if(seen.has(r.id))return '';seen.add(r.id);return replyCard(r,announcementId,depth)+renderBranch(r.id,depth+1)}).join('')}return renderBranch('',0)+replies.filter(r=>!seen.has(r.id)).map(r=>replyCard(r,announcementId)).join('')}
+
+function card(a){
+  const att=a.attachments||[],replies=Array.isArray(a.replies)?a.replies:[],replyCount=Number(a.replyCount??replies.length);
+  const showAll=new URLSearchParams(location.search).get('discussion')===String(a.id);
+  const visibleReplies=showAll?replies:replies.slice(0,5);
+  const inline=att.filter(f=>["image","video","audio"].includes(GBUI.kindOf(f)));
+  const other=att.filter(f=>!["image","video","audio"].includes(GBUI.kindOf(f)));
+  return `<article class="anncard" data-announcement="${GBUI.esc(a.id)}">
+    <div class="matmeta"><span class="pill">📢 ${GBUI.esc(a.audience==="admins"?"Staff":"Everyone")}</span><small>${when(a)}</small></div>
+    <h3>${GBUI.esc(a.title||"Announcement")}</h3>
+    <div class="rich">${GBUI.renderBody(a.body,a.bodyFormat)}</div>
+    ${GBUI.media(inline)}${GBUI.files(other)}
+    <section class="announcement-thread" aria-label="Replies"><h4>💬 Student replies <span class="muted">(${replyCount})</span></h4>
+      <div class="announcement-replies">${replies.length?replyTree(visibleReplies,a.id):'<p class="muted">Be the first to reply.</p>'}</div>
+      ${!showAll&&replyCount>5?`<a class="btn light" href="/announcements.html?discussion=${encodeURIComponent(a.id)}" style="margin:10px 0;display:inline-flex">View all ${replyCount} replies →</a>`:''}
+      ${showAll?`<a href="/announcements.html" class="btn light">← All announcements</a>`:''}
+      <form class="announcement-reply-form" data-reply-form="${GBUI.esc(a.id)}"><label class="sr-only" for="reply-${GBUI.esc(a.id)}">Your public reply</label><input id="reply-${GBUI.esc(a.id)}" name="message" maxlength="1500" minlength="2" required placeholder="Write a public reply…" autocomplete="off"><button class="btn primary" type="submit">Reply</button></form>
+    </section>
+  </article>`;
+}
+let announcements=[];
+function render(){const discussion=new URLSearchParams(location.search).get("discussion");const sorted=[...announcements].filter(a=>!discussion||String(a.id)===discussion).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  $('out').innerHTML=sorted.length?GBUI.collapsible('moreAnn',sorted.map(card)):'<p class="muted">No announcements yet. Check back soon.</p>';}
+async function loadAnnouncements(){const discussion=new URLSearchParams(location.search).get('discussion');const d=await GB.api('/api/announcements'+(discussion?'?discussion='+encodeURIComponent(discussion):''));announcements=Array.isArray(d)?d:(d.items||[]);try{localStorage.setItem('gbAnnouncementsCache',JSON.stringify(announcements))}catch{}render();}
+$('out').addEventListener('submit',async e=>{
+  const form=e.target.closest('[data-reply-form]');if(!form)return;e.preventDefault();const id=form.dataset.replyForm,entry=announcements.find(v=>v.id===id);
+  const input=form.elements.message,button=form.querySelector('button'),message=input.value.trim();if(message.length<2)return;
+  button.disabled=true;button.textContent='Sending…';
+  try{
+    const response=await GB.api('/api/announcements/'+encodeURIComponent(id)+'/replies',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,parentId:form.dataset.parentId||''})});
+    if(entry){form.dataset.parentId='';entry.replies=Array.isArray(entry.replies)?entry.replies:[];entry.replies.push(response.reply);entry.replyCount=Number(entry.replyCount??entry.replies.length-1)+1;try{localStorage.setItem('gbAnnouncementsCache',JSON.stringify(announcements))}catch{};render();}
+  }catch(err){button.disabled=false;button.textContent='Reply';form.insertAdjacentHTML('beforeend',`<span class="error" role="alert">${GBUI.esc(err.message)}</span>`)}
+});
+$('out').addEventListener('click',async e=>{
+ const like=e.target.closest('[data-like-reply]'),quote=e.target.closest('[data-thread-reply]'),del=e.target.closest('[data-delete-reply]');
+ if(del){if(!await GBUI.confirmAction('Delete this reply?','Your reply will disappear. Other students’ responses will remain visible.','Delete reply'))return;del.disabled=true;try{await GB.api('/api/announcements/'+encodeURIComponent(del.dataset.ann)+'/replies/'+encodeURIComponent(del.dataset.deleteReply),{method:'DELETE'});await loadAnnouncements();}catch(error){GBUI.toast?.(error.message||'Could not delete reply.');del.disabled=false;}return;}
+ if(quote){const form=document.querySelector(`[data-reply-form="${CSS.escape(quote.dataset.ann)}"]`);if(!form)return;form.dataset.parentId=quote.dataset.threadReply;form.elements.message.placeholder='Reply to this student…';form.elements.message.focus();form.scrollIntoView({behavior:'smooth',block:'center'});return;}
+ if(!like)return;like.disabled=true;try{const item=announcements.find(a=>String(a.id)===like.dataset.ann);const r=(item?.replies||[]).find(x=>String(x.id)===like.dataset.likeReply);if(!r)return;
+ const current=like.getAttribute('aria-pressed')==='true';await GB.api('/api/announcements/'+encodeURIComponent(item.id)+'/replies/'+encodeURIComponent(r.id)+'/like',{method:current?'DELETE':'POST'});
+ const u=JSON.parse(localStorage.getItem('gbUser')||sessionStorage.getItem('gbUser')||'{}');r.likes=Array.isArray(r.likes)?r.likes:[];r.likes=current?r.likes.filter(id=>id!==u.id):[...new Set([...r.likes,u.id])];render();
+ }catch(err){GBUI.toast?.(err.message||'Unable to update like.')}finally{like.disabled=false;}
+});
+loadAnnouncements().catch(e=>{try{const c=JSON.parse(localStorage.getItem('gbAnnouncementsCache')||'[]');if(Array.isArray(c)&&c.length){announcements=c;render();return;}}catch{}$('out').innerHTML=`<p class="error">${GBUI.esc(e.message)}</p>`});
+</script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#082d63">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.ico">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<title>Learning Materials • Gifted Brainz Tutorial</title>
+<link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="stylesheet" href="/premium-access.css"><link rel="stylesheet" href="/learning-spaces.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<style>
+
+.material-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,245px),1fr));align-items:stretch;gap:12px;margin-top:14px}
+.matcard{height:100%;min-width:0;background:white;border:1px solid var(--line);border-radius:15px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.matcard h3{margin:0;overflow-wrap:anywhere;word-break:break-word}
+.matcard-locked{border-color:#eadfcb;background:linear-gradient(160deg,#fff 42%,#fffaf1 100%)}
+.mat-locked-pill{display:inline-flex;align-items:center;gap:5px;background:#fff0d7;color:#75500e;border-radius:99px;padding:6px 10px;font-weight:850;font-size:.76rem}
+.matcard-locked .matactions .btn{background:#102f58;color:#fff;border-color:#102f58}
+.matcard .muted{overflow-wrap:anywhere;word-break:break-word}
+.matmeta{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap;font-size:.82rem}
+.matactions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:auto}
+.matactions .btn{flex:0 1 auto}
+.material-detail-heading{margin:0 0 4px;overflow-wrap:anywhere}
+.material-content{line-height:1.75;overflow-wrap:anywhere;word-break:break-word;font-size:1rem}
+.material-content img,.material-content video{max-width:100%;height:auto;border-radius:12px}
+.material-content .media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;margin-top:14px}
+.material-content .media{min-width:0;margin:0;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;display:flex;flex-direction:column;gap:8px}
+.material-content .media-image-button{display:block;width:100%;border:0;padding:0;background:transparent;cursor:zoom-in;border-radius:10px;overflow:hidden}
+.material-content .media img{display:block;width:100%;max-height:min(66vh,720px);object-fit:contain;object-position:center;background:#edf2f7}
+.material-content .media video{display:block;width:100%;max-height:min(66vh,700px);background:#111}
+.material-content .media audio{width:100%}
+.material-content .zoom-hint{display:block;text-align:center;color:#1763c6;font-weight:750;font-size:.84rem;margin-top:2px}
+.material-content .doc-preview-card{display:flex;flex-direction:column;gap:12px;align-items:flex-start;justify-content:center;min-height:150px;background:linear-gradient(145deg,#fff,#f2f6fc)}
+.doc-preview-icon{font-size:2.6rem;line-height:1}
+.doc-preview-actions{display:flex;gap:8px;flex-wrap:wrap;width:100%}
+.doc-preview-actions .btn{flex:1 1 auto}
+.material-detail-box{max-width:1120px;width:min(1120px,calc(100vw - 32px));max-height:92dvh;padding:clamp(14px,2vw,24px)}
+.material-detail-box .modal-body{max-height:calc(92dvh - 100px);overflow:auto;padding-top:10px}
+.material-detail-box .rich{font-size:1.04rem;line-height:1.85}
+.material-detail-box .rich img{display:block;max-width:100%;max-height:min(68vh,760px);object-fit:contain;margin:14px auto;cursor:zoom-in;background:#f3f6fa}
+.material-detail-box .rich video{display:block;max-width:100%;max-height:70vh;margin:14px auto}
+#documentViewer{isolation:isolate}#documentViewerStatus{position:absolute;top:64px;left:0;right:0;bottom:0;z-index:3;display:flex;align-items:center;justify-content:center;background:#08172a;margin:0;min-height:0;flex:none}#documentViewerStatus .status-card{max-width:min(92%,460px);text-align:center}#documentViewerStatus .status-card p{font-weight:850;font-size:1.12rem}
+.media-viewer[hidden],.media-viewer-status[hidden],#documentViewerFrame[hidden],#documentViewerPdf[hidden],#imageViewerImage[hidden]{display:none!important}
+.pdf-page-scroll{flex:1;min-height:0;overflow:auto;background:#e8edf3;display:block;padding:12px 8px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.pdf-page-scroll canvas{max-width:100%;height:auto;box-shadow:0 4px 18px #0005;border-radius:4px;background:#fff}
+.media-viewer{position:fixed;inset:0;z-index:120;background:#071323;color:#fff;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.media-viewer-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:10px 14px;background:#0b2144;border-bottom:1px solid #ffffff20;flex:none}
+.media-viewer-heading{display:flex;flex-direction:column;gap:4px;min-width:0}
+.media-viewer-heading strong{font-size:1rem;overflow-wrap:anywhere}
+.media-viewer-heading small{font-size:.78rem;color:#d1d9e6}
+.media-viewer-controls{display:flex;align-items:center;gap:8px;flex:none}
+.media-viewer .btn{white-space:nowrap}
+#documentViewerFrame{display:block;width:100%;height:100%;flex:1;min-height:0;border:0;background:#eef1f6}
+.media-viewer-status{display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;line-height:1.6;min-height:0;flex:1;overflow:auto}
+.media-viewer-status .status-card{max-width:560px;background:#fff;color:#11233d;border-radius:16px;padding:24px;box-shadow:0 12px 34px #0003}
+.media-viewer-status .status-card p{margin:0 0 14px}
+#imageViewerStage{flex:1;min-height:0;overflow:auto;display:block;padding:12px;touch-action:pan-x pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#imageViewerImage{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;object-position:center;cursor:zoom-in;transition:width .18s ease;user-select:none;-webkit-user-drag:none}
+#imageViewerImage.is-zoomed{max-width:none;max-height:none;width:max(100%,190vw);height:auto;margin:0;cursor:grab;touch-action:pan-x pan-y}
+#imageViewerImage.is-zoomed:active{cursor:grabbing}
+@media(max-width:700px){
+  #modal{padding:0;align-items:stretch}
+  #modal .material-detail-box{width:100%;max-width:none;height:100dvh;max-height:100dvh;border-radius:0;padding:12px;display:flex;flex-direction:column}
+  .material-detail-box .modal-head{position:sticky;top:-12px;z-index:2;padding:8px 0;background:#fff}
+  .material-detail-box .modal-body{max-height:none;height:100%;flex:1;min-height:0;overflow:auto;padding-bottom:24px}
+  .material-content .media-grid{grid-template-columns:1fr}
+  .material-content .media img{max-height:58dvh}
+  .media-viewer-bar{min-height:60px;padding:8px 10px}
+  .media-viewer-heading strong{font-size:.9rem;max-width:54vw}
+  .media-viewer-heading small{font-size:.7rem}
+  .media-viewer-controls{gap:5px}
+  .media-viewer-controls .btn{padding:8px 10px;font-size:.85rem}
+  #imageViewerStage{padding:6px}
+  #imageViewerImage.is-zoomed{width:max(100%,190vw)}
+}
+
+/* Contemporary digital-library presentation: restrained, editorial and clear. */
+.matcard{border-radius:17px;border-color:#dce5ef;box-shadow:0 5px 16px rgba(13,41,75,.04);gap:13px;padding:19px}
+.matcard h3{font-size:1.07rem;color:#152e50;line-height:1.4}
+.matcard .matactions{margin-top:auto}
+.matcard .matmeta .pill{border:1px solid #d9e6f4;background:#edf4fb;color:#234c77}
+.pdf-page-holder{box-sizing:border-box;width:100%;min-height:70px;background:transparent;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;color:#596e87;padding:0;margin:0 auto 12px;position:relative;isolation:isolate;overflow:visible}
+.pdf-page-holder canvas{display:block;max-width:100%;height:auto!important;object-fit:contain;background:#fff;box-shadow:0 1px 7px #0002;flex-shrink:0}
+.pdf-page-label{font-size:.8rem;font-weight:800}.pdf-page-await{font-size:.75rem;color:#637991}
+.material-subject-section{margin:8px 0 26px}.material-subject-section .section-head{margin-bottom:13px}
+
+/* An editorial folio card, intentionally distinct from CBT cards. */
+.material-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,275px),1fr));gap:17px}
+.matcard{border:1px solid #d8e2ee;border-radius:18px;padding:0 0 17px;overflow:hidden;gap:12px;box-shadow:0 9px 23px #082d6310;transition:box-shadow .18s,transform .18s}
+.matcard>*:not(.mat-folio){margin-left:17px;margin-right:17px}
+.matcard:hover{transform:translateY(-3px);box-shadow:0 16px 32px #082d6320}
+.matcard h3{color:#082d63;font-size:1.06rem;line-height:1.4}
+.mat-folio{display:flex;align-items:center;justify-content:space-between;position:relative;min-height:136px;padding:16px 17px;color:#fbe4ad;background:linear-gradient(118deg,#0b3469 0%,#082d63 100%);overflow:hidden}
+.mat-folio:after{content:'';position:absolute;right:-50px;top:-90px;width:220px;height:220px;border:1px solid #f3ca7044;border-radius:50%;pointer-events:none}
+.mat-folio-icon{font-size:3.35rem;line-height:1;display:grid;place-items:center;flex:none;min-width:80px;min-height:80px;background:#ffffff14;border:1px solid #ffffff31;border-radius:18px}
+.mat-folio-line{align-self:flex-start;font-weight:850;font-size:.63rem;letter-spacing:.10em;line-height:1.5;max-width:120px}
+.mat-folio-label{position:absolute;left:17px;bottom:17px;font-size:.69rem;font-weight:850;letter-spacing:.12em;color:#fff}
+.matcard .matactions{margin-top:auto;display:flex;align-items:stretch;flex-wrap:wrap}
+.matcard .matactions .btn{min-height:43px;flex:1 1 auto;border-radius:10px}
+@media(max-width:600px){.material-grid{gap:13px}.mat-folio{min-height:126px}.mat-folio-icon{font-size:2.65rem;min-width:68px;min-height:68px}}
+@media(prefers-reduced-motion:reduce){.matcard{transition:none!important}.matcard:hover{transform:none}}
+
+@media (max-width:700px){
+ .matcard{border-radius:20px!important;overflow:hidden}
+ .mat-folio{border-radius:19px 19px 12px 12px!important;overflow:hidden}
+ .material-subject-section,.material-grid{border-radius:18px}
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body>
+<div class="network-banner" id="networkBanner"></div>
+<div id="shell">
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><span class="ic">📚</span> Learning Materials</div>
+      <div class="topbar-right"><span class="who" id="who"></span><button class="btn light" onclick="GB.logout()">Log out</button></div>
+    </div>
+    <div class="content">
+      <p class="muted">Browse and open learning materials directly. Filter by subject or search for a title, note or attachment.</p>
+      <div id="spaceChooser" role="navigation" aria-label="Learning spaces"></div>
+      <div class="tabs" id="tabs"></div>
+      <div class="field full" style="margin-top:2px">
+        <label for="materialSearch">Search learning materials</label>
+        <input id="materialSearch" type="search" maxlength="120" placeholder="Search by title, subject or keyword…" autocomplete="off">
+      </div>
+      <div id="out"><p class="muted">Loading learning materials…</p></div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="modal" hidden>
+  <div class="modal-box material-detail-box">
+    <div class="modal-head"><h2 id="mTitle"></h2><button class="btn light" type="button" id="mClose">Close</button></div>
+    <div class="modal-body material-content" id="mBody"></div>
+  </div>
+</div>
+<div class="media-viewer" id="documentViewer" role="dialog" aria-modal="true" aria-labelledby="documentViewerTitle" hidden>
+  <header class="media-viewer-bar">
+    <div class="media-viewer-heading"><strong id="documentViewerTitle">Learning material</strong><small>Secure document preview</small></div>
+    <div class="media-viewer-controls"><button class="btn light" type="button" id="documentOpenSeparate" hidden>Open separately</button><button class="btn light" type="button" id="documentViewerClose">Close</button></div>
+  </header>
+  <div class="media-viewer-status" id="documentViewerStatus"><div class="status-card"><p>Loading note…</p></div></div>
+  <div id="documentViewerPdf" class="pdf-page-scroll" hidden></div>
+  <iframe id="documentViewerFrame" title="Learning material preview" hidden></iframe>
+</div>
+<div class="media-viewer" id="imageViewer" role="dialog" aria-modal="true" aria-labelledby="imageViewerTitle" hidden>
+  <header class="media-viewer-bar">
+    <div class="media-viewer-heading"><strong id="imageViewerTitle">Image preview</strong><small>Tap or double-tap the image to zoom in and out.</small></div>
+    <div class="media-viewer-controls"><button class="btn light" type="button" id="imageViewerClose">Close</button></div>
+  </header>
+  <div id="imageViewerStage"><img id="imageViewerImage" alt="Enlarged learning material" draggable="false"><div id="imageViewerStatus" class="media-viewer-status" hidden></div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><script src="/learning-spaces.js"></script><script src="/premium-access.js?v=12.21.0"></script><script src="/app.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/gb-ui.js?v=12.21.0"></script>
+<script>
+if(!GB.token()) location="/login.html";
+GBUI.mount({active:"/materials.html"});
+const $=id=>document.getElementById(id);
+window.addEventListener("gb-subject-icons",()=>{if(typeof render==="function")render()});
+let items=[],current=new URLSearchParams(location.search).get("subject")||"All",searchTerm=new URLSearchParams(location.search).get("search")||"";
+const dateOf=m=>{const d=new Date(m.createdAt||m.date||m.updatedAt||Date.now());return isNaN(d)?"":d.toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})};
+const downloadKey=(m,f)=>`material:${m.id}:file:${f.key||f.url||f.fileName||"attachment"}`;
+const materialKeys=m=>(m.attachments||[]).map(f=>downloadKey(m,f));
+const downloadedCache=new Map();
+async function isMaterialDownloaded(m){
+  const files=m.attachments||[];if(!files.length)return false;
+  const key=`material:${m.id}:all`;if(downloadedCache.has(key))return downloadedCache.get(key);
+  const states=await Promise.all(materialKeys(m).map(k=>GB.materialDownloadExists(k)));
+  const yes=states.length>0&&states.every(Boolean);downloadedCache.set(key,yes);return yes;
+}
+function materialType(m){
+  const a=m.attachments||[];if(!a.length)return "Written note";
+  const kinds=[...new Set(a.map(GBUI.kindOf))];
+  if(kinds.length>1)return "Mixed files";
+  return ({image:"Images",video:"Video",audio:"Audio",pdf:"PDF document",text:"Text document",file:"Attached document"})[kinds[0]]||"Attached file";
+}
+function materialCard(m){
+  const locked=!!m.locked;
+  const files=locked?[]:(m.attachments||[]);
+  const totalBytes=files.reduce((sum,file)=>sum+(Number(file.size)||0),0);
+  const downloadSize=totalBytes?` · ${(totalBytes/1024/1024).toFixed(2)} MB`:"";
+  const openButton=locked?`<button class="btn primary" type="button" data-material-premium="${GBUI.esc(m.id)}">🔒 View Premium Access</button>`:`<button class="btn primary" type="button" data-material-open="${GBUI.esc(m.id)}">Open material</button>`;
+  return `<article class="matcard ${locked?"matcard-locked":""}"><div class="mat-folio"><span class="mat-folio-line">GIFTED BRAINZ · STUDY LIBRARY</span><span class="mat-folio-icon" aria-hidden="true">${GBUI.esc(GBUI.SUBJECT_ICONS[m.subject]||"📘")}</span><span class="mat-folio-label">LEARNING MATERIAL</span></div><div class="matmeta"><span class="pill">${GBUI.esc(m.subject||"General")}</span><small>${dateOf(m)}</small></div>
+  ${locked?'<span class="mat-locked-pill">🔒 Premium only</span>':''}
+  <h3>${GBUI.esc(m.title||"Untitled material")}</h3>
+  ${m.summary?`<p class="muted">${GBUI.esc(m.summary)}</p>`:""}
+  <div class="matmeta"><span class="muted">${locked?"Activated account required":GBUI.esc(materialType(m))}</span><span class="muted">${locked?"":(files.length?files.length+" attachment"+(files.length===1?"":"s"):"Note")}</span></div>
+  <div class="matactions">${openButton}${!locked&&files.length?`<button class="btn light" type="button" data-download-material="${GBUI.esc(m.id)}">Download files${GBUI.esc(downloadSize)}</button>`:""}</div></article>`;
+}
+function updateUrl(){
+  const q=new URLSearchParams();
+  if(GBLearningSpaces.space==="premium")q.set("space","premium");
+  if(current&&current!=="All")q.set("subject",current);
+  if(searchTerm.trim())q.set("search",searchTerm.trim());
+  history.replaceState(null,"",q.toString()?`?${q}`:location.pathname);
+}
+function matchesMaterialSearch(m){
+  const query=searchTerm.trim().toLowerCase();
+  if(!query)return true;
+  return [m.title,m.summary,m.subject,m.body,...(m.attachments||[]).map(a=>a.fileName)]
+    .some(value=>String(value||"").toLowerCase().includes(query));
+}
+function renderTabs(){
+  const subjects=["All",...GBUI.mySubjects()];
+  $("tabs").innerHTML=subjects.map(subject=>{
+    const n=items.filter(m=>(subject==="All"||m.subject===subject)&&matchesMaterialSearch(m)).length;
+    return `<button class="tab ${subject===current?"on":""}" type="button" data-tab="${GBUI.esc(subject)}">${GBUI.esc(subject)} <span class="count">${n}</span></button>`;
+  }).join("");
+}
+function render(){
+  renderTabs();
+  const rows=items.filter(m=>(current==="All"||m.subject===current)&&matchesMaterialSearch(m));
+  if(!rows.length){
+    $("out").innerHTML=`<div class="card"><p class="muted">${searchTerm.trim()?"No learning materials match your search.":"No learning materials have been published for this selection yet."}</p></div>`;
+    return;
+  }
+  // Keep each resource in Learning Materials; subject headings are only filters,
+  // not another level of navigation that students must open.
+  if(current!=="All"){
+    $("out").innerHTML=`<div class="material-grid">${rows.map(materialCard).join("")}</div>`;
+    return;
+  }
+  const bySubject=new Map();
+  for(const m of rows){if(!bySubject.has(m.subject))bySubject.set(m.subject,[]);bySubject.get(m.subject).push(m);}
+  $("out").innerHTML=[...bySubject.entries()].map(([subject,group])=>
+    `<section class="material-subject-section"><div class="section-head"><h2>${GBUI.esc(GBUI.SUBJECT_ICONS?.[subject]||"📚")} ${GBUI.esc(subject)}</h2><small class="muted">${group.length} material${group.length===1?"":"s"}</small></div><div class="material-grid">${group.map(materialCard).join("")}</div></section>`
+  ).join("");
+}
+const INLINE_PREVIEW_LIMIT=5*1024*1024;   // below this a document opens with no extra prompt
+const HARD_PREVIEW_LIMIT=50*1024*1024;    // above this even "Preview anyway" declines, to avoid crashing low-memory phones
+let activeDocumentBlob="",activeImageBlob="",viewerLoadId=0,imageLoadId=0,lastImageTap=0,imageZoomTimer=0;
+const guessedType=f=>String(f?.contentType||({pdf:"application/pdf",text:"text/plain",image:"image/*"}[GBUI.kindOf(f)]||"application/octet-stream"));
+function renderMaterialAttachments(list){
+  if(!Array.isArray(list)||!list.length)return "";
+  return `<div class="media-grid">${list.map(f=>{
+    const kind=GBUI.kindOf(f),url=GB.fileUrl(f.url,{inline:true}),name=String(f.fileName||"Attachment"),safeUrl=GBUI.esc(f.url||""),safeName=GBUI.esc(name),size=Number(f.size)||0;
+    if(kind==="image")return `<figure class="media"><button class="media-image-button" type="button" data-view-image="${safeUrl}" data-view-name="${safeName}" aria-label="Enlarge ${safeName}"><img loading="lazy" src="${GBUI.esc(url)}" alt="${safeName||"Learning material image"}"></button><figcaption>${safeName}</figcaption><span class="zoom-hint">🔍 Tap or click image to zoom in</span></figure>`;
+    if(kind==="video")return `<figure class="media"><video controls playsinline preload="metadata" src="${GBUI.esc(url)}" type="${GBUI.esc(f.contentType||"video/mp4")}"></video><figcaption>${safeName}</figcaption></figure>`;
+    if(kind==="audio")return `<figure class="media"><audio controls preload="metadata" src="${GBUI.esc(url)}"></audio><figcaption>${safeName}</figcaption></figure>`;
+    if(kind==="pdf"||kind==="text"){
+      // Every PDF/text file gets a preview button now — files over
+      // HARD_PREVIEW_LIMIT still decline (openDocumentViewer explains why),
+      // but anything else can at least be tried instead of forcing a
+      // download first, which was the main "it just tells me to open it
+      // myself" complaint on phones.
+      const downloadLabel=size?`Download · ${(size/1024/1024).toFixed(2)} MB`:"Download";
+      return `<figure class="media doc-preview-card"><div class="doc-preview-icon">${kind==="pdf"?"📕":"📃"}</div><div><strong>${safeName}</strong><div class="muted" style="margin-top:4px">${kind==="pdf"?"PDF document":"Text note"}</div></div><div class="doc-preview-actions"><button class="btn primary" type="button" data-view-document="${safeUrl}" data-view-name="${safeName}" data-view-type="${GBUI.esc(guessedType(f))}" data-view-size="${size}">Open full-screen preview</button><button class="btn light" type="button" data-download-file="${safeUrl}" data-download-name="${safeName}">${GBUI.esc(downloadLabel)}</button></div></figure>`;
+    }
+    const downloadLabel=size?`Download · ${(size/1024/1024).toFixed(2)} MB`:"Download";
+    return `<div class="filerow"><span class="fic">📎</span><span class="fname">${safeName}</span><span class="factions"><button class="btn gold" type="button" data-download-file="${safeUrl}" data-download-name="${safeName}">${GBUI.esc(downloadLabel)}</button></span></div>`;
+  }).join("")}</div>`;
+}
+function openMaterial(id){
+  const m=items.find(x=>String(x.id)===String(id));if(!m)return;
+  if(m.locked){GBPremium.show("learning material",m.title);return;}
+  $("mTitle").textContent=m.title||"Learning material";
+  const rawBody=String(m.body||"").trim();
+  const body=GBUI.renderBody(m.body,m.bodyFormat||m.format)||"<p class='muted'>No written note was included with this material.</p>";
+  const attachments=m.attachments||[],files=renderMaterialAttachments(attachments);
+  $("mBody").innerHTML=`<div class="matmeta"><span class="pill">${GBUI.esc(m.subject||"General")}</span><small>${dateOf(m)}</small></div><div class="material-content rich">${body}</div>${files?`<div class="material-content" style="margin-top:16px"><h3>Attached materials</h3>${files}</div>`:""}${attachments.length?`<div class="factions" style="margin-top:14px"><button class="btn gold" type="button" data-download-material="${GBUI.esc(m.id)}">Download all attachments${attachments.some(f=>Number(f.size)>0)?` · ${((attachments.reduce((n,f)=>n+(Number(f.size)||0),0))/1024/1024).toFixed(2)} MB`:""}</button></div>`:""}`;
+  $("modal").hidden=false;document.body.classList.add("noscroll");
+  // Opening a material is supposed to show the material, not a card that
+  // says "tap here to actually open it". Whenever there is exactly one
+  // previewable document attached, jump straight into the full-screen
+  // reader as soon as "Open material" is tapped — this used to require a
+  // written note to be absent first, so any material with both a short note
+  // and a single PDF/text file made the student open the modal and then
+  // tap "Open full-screen preview" a second time. The note is still one tap
+  // away: closing the reader returns to this modal underneath it.
+  const onlyDoc=attachments.length===1&&["pdf","text"].includes(GBUI.kindOf(attachments[0]));
+  if(onlyDoc)void openDocumentViewer(attachments[0].url,attachments[0].fileName||m.title||"Learning material",guessedType(attachments[0]),Number(attachments[0].size)||0);
+}
+async function openDocumentViewer(url,title,type="application/pdf",knownSize=0,forcePreview=false){
+  const myLoad=++viewerLoadId;
+  if(activeDocumentBlob){URL.revokeObjectURL(activeDocumentBlob);activeDocumentBlob="";}
+  $("documentViewerTitle").textContent=title||"Learning material";
+  $("documentOpenSeparate").hidden=true;
+  $("documentViewerFrame").hidden=true;$("documentViewerFrame").removeAttribute("src");
+  $("documentViewerPdf").hidden=true;$("documentViewerPdf").innerHTML="";
+  $("documentViewerStatus").hidden=false;$("documentViewerStatus").innerHTML='<div class="status-card"><p>Loading note…</p><small>Your document will appear shortly.</small></div>';
+  $("documentViewer").hidden=false;
+  // A large file still gets a preview — it is just offered as a heads-up
+  // first instead of a dead end, because on a phone "download it, then find
+  // it in Downloads, then open it" is exactly the extra friction students
+  // were running into. Anything under INLINE_PREVIEW_LIMIT opens straight
+  // away; above that, and whenever the size could not be checked up front,
+  // the student gets one tap to confirm before it streams in.
+  if(!forcePreview&&knownSize>INLINE_PREVIEW_LIMIT){
+    const mb=(knownSize/1024/1024).toFixed(1);
+    $("documentViewerStatus").innerHTML=`<div class="status-card"><p><strong>This file is ${mb} MB</strong></p><p>Previewing it here will use data and memory on this device. You can preview it anyway, or download it instead.</p><div class="doc-preview-actions"><button class="btn primary" type="button" id="docPreviewAnyway">Preview anyway</button><button class="btn light" type="button" data-download-file="${GBUI.esc(url)}" data-download-name="${GBUI.esc(title||"learning-material")}">Download instead</button></div></div>`;
+    const btn=document.getElementById("docPreviewAnyway");
+    if(btn)btn.onclick=()=>openDocumentViewer(url,title,type,knownSize,true);
+    return;
+  }
+  try{
+    const blobUrl=await GB.fileBlobUrl(url,{contentType:type,maxBytes:HARD_PREVIEW_LIMIT});
+    if(myLoad!==viewerLoadId){URL.revokeObjectURL(blobUrl);return;}
+    activeDocumentBlob=blobUrl;
+    const isPdf=/pdf/i.test(type)||/\.pdf($|\?)/i.test(url);
+    // Mobile browsers (especially iOS Safari) frequently refuse to render a
+    // blob: URL inline inside an iframe — instead of showing the PDF they
+    // fall back to their own "tap to open" file card, which is what was
+    // happening here. Rendering the PDF ourselves with PDF.js onto <canvas>
+    // elements sidesteps that entirely: it behaves the same on every device
+    // because nothing depends on the phone's own PDF handling. Anything
+    // that is not a PDF (plain text notes) still uses the iframe, which
+    // mobile browsers render inline without issue.
+    if(isPdf){
+      const shown=await renderPdfPages(blobUrl,title);
+      if(myLoad!==viewerLoadId)return;
+      if(shown){$("documentViewerStatus").hidden=true;return;}
+    }
+    const frame=$("documentViewerFrame");frame.title=title||"Learning material preview";frame.src=blobUrl;frame.hidden=false;
+    // Native PDF readers vary across mobile browsers. Provide a fallback
+    // action that uses only the short-lived in-memory blob, never auth tokens.
+    $("documentViewerStatus").hidden=true;
+    const more=document.getElementById("documentOpenSeparate");
+    if(more){more.hidden=false;more.onclick=()=>window.open(blobUrl,"_blank","noopener,noreferrer");}
+  }catch(err){
+    if(myLoad!==viewerLoadId)return;
+    // Do not expose file URLs, authentication internals or backend errors to students.
+    const msg="We couldn't load this note. Please try again or download the file.";
+    $("documentViewerStatus").innerHTML=`<div class="status-card"><p><strong>Preview unavailable</strong></p><p>${GBUI.esc(msg)}</p><div class="doc-preview-actions"><button class="btn primary" type="button" id="retryDocumentPreview">Try preview again</button><button class="btn gold" type="button" data-download-file="${GBUI.esc(url)}" data-download-name="${GBUI.esc(title||"learning-material")}">Download material</button></div></div>`;
+    $("documentViewerStatus").hidden=false;
+    const retry=$("retryDocumentPreview");
+    if(retry)retry.onclick=()=>openDocumentViewer(url,title,type,knownSize,true);
+  }
+}
+// PDF.js is loaded on demand, the first time a PDF is actually opened,
+// rather than on every visit to Learning Materials. It is fetched from
+// whichever of these CDNs responds first, in order — if one host is slow,
+// blocked, or unreachable on a given mobile network, the others still let
+// the viewer work, instead of silently falling back to the phone's own
+// (often blurry or non-functional) PDF handling for every student on that
+// network. Both script and worker always come from the same host that
+// actually succeeded, so there's no version mismatch between them.
+const PDFJS_CDNS=[
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build",
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174",
+  "https://unpkg.com/pdfjs-dist@3.11.174/build"
+];
+let pdfjsBase=null, pdfjsLoadPromise=null;
+function loadScriptOnce(src){
+  return new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    let settled=false;
+    const complete=(ok)=>{
+      if(settled)return;settled=true;clearTimeout(timer);
+      if(!ok)script.remove();
+      ok?resolve():reject(new Error("Document reader unavailable"));
+    };
+    const timer=setTimeout(()=>complete(false),5000);
+    script.src=src;script.async=true;
+    script.onload=()=>complete(true);script.onerror=()=>complete(false);
+    document.head.appendChild(script);
+  });
+}
+async function ensurePdfJs(){
+  if(window.pdfjsLib)return true;
+  if(pdfjsLoadPromise)return pdfjsLoadPromise;
+  pdfjsLoadPromise=(async()=>{
+    for(const base of PDFJS_CDNS){
+      try{ await loadScriptOnce(base+"/pdf.min.js"); if(window.pdfjsLib){pdfjsBase=base;return true;} }
+      catch{}
+    }
+    return false;
+  })();
+  return pdfjsLoadPromise;
+}
+// Renders every page of a PDF blob onto its own <canvas>, scaled to the
+// viewer's width, so the whole document scrolls like a normal page instead
+// of depending on the phone's native PDF viewer. Returns false (leaving the
+// caller to fall back to the iframe) if PDF.js cannot be loaded or cannot
+// parse the file at all.
+async function renderPdfPages(blobUrl,title){
+  const host=$("documentViewerPdf");
+  host.innerHTML="";host.hidden=false;
+  try {
+    if(!(await ensurePdfJs()))throw new Error("PDF preview library unavailable.");
+    pdfjsLib.GlobalWorkerOptions.workerSrc=pdfjsBase+"/pdf.worker.min.js";
+    const task=pdfjsLib.getDocument({url:blobUrl,stopAtErrors:false});
+    const pdf=await task.promise;
+    if(!pdf.numPages)throw new Error("This document contains no readable pages.");
+    const maxPages=Math.min(pdf.numPages,350);
+    const placeholders=[];
+    for(let n=1;n<=maxPages;n++){
+      const pane=document.createElement("div");pane.className="pdf-page-holder";
+      pane.setAttribute("aria-label",`Page ${n} of ${pdf.numPages}`);
+      pane.innerHTML=`<span class="pdf-page-label">Page ${n} of ${pdf.numPages}</span><span class="pdf-page-await">${n===1?"Preparing first page…":""}</span>`;
+      host.appendChild(pane);placeholders.push(pane);
+    }
+    const renderPage=async index=>{
+      const holder=placeholders[index];
+      if(!holder||holder.dataset.rendered)return;
+      holder.dataset.rendered="pending";
+      try{
+        const page=await pdf.getPage(index+1);
+        const natural=page.getViewport({scale:1});
+        const width=Math.max(200,Math.min(host.clientWidth-24,940));
+        const cssScale=width/natural.width;
+        const viewport=page.getViewport({scale:cssScale});
+        const ratio=Math.min(window.devicePixelRatio||1,2);
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.ceil(viewport.width*ratio);canvas.height=Math.ceil(viewport.height*ratio);
+        canvas.style.width=Math.round(viewport.width)+"px";
+        canvas.style.height=Math.round(viewport.height)+"px";
+        canvas.style.maxWidth="100%";
+        canvas.setAttribute("aria-label",`Page ${index+1} of ${pdf.numPages}`);
+        await page.render({canvasContext:canvas.getContext("2d",{alpha:false}),viewport,transform:[ratio,0,0,ratio,0,0]}).promise;
+        holder.replaceChildren(canvas);
+        holder.dataset.rendered="yes";
+      }catch(error){
+        holder.dataset.rendered="failed";
+        holder.textContent="Page "+(index+1)+" could not be displayed.";
+      }
+    };
+    // The first page becomes readable immediately; subsequent pages render
+    // when approached, avoiding hundreds of canvases and a permanently
+    // visible loading overlay for long notes.
+    await renderPage(0);
+    // Do not mistake a failed first page for a successful preview. Fall back
+    // to the browser reader instead of leaving an empty/failed screen.
+    if(placeholders[0]?.dataset.rendered!=="yes")throw new Error("First page could not render");
+    const rest=placeholders.slice(1);
+    if("IntersectionObserver" in window){
+      const observer=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting)return;
+          const i=placeholders.indexOf(entry.target);
+          observer.unobserve(entry.target);
+          if(i>0)void renderPage(i);
+        });
+      },{root:host,rootMargin:"1200px 0px"});
+      rest.forEach(holder=>observer.observe(holder));
+    }else{
+      // Render in small sequential groups on older devices.
+      (async()=>{for(let i=1;i<placeholders.length;i++){await renderPage(i);await new Promise(r=>setTimeout(r,0));}})();
+    }
+    return true;
+  }catch{
+    host.hidden=true;host.replaceChildren();return false;
+  }
+}
+async function openImageViewer(url,title="Image preview"){
+  clearTimeout(imageZoomTimer);lastImageTap=0;
+  const myLoad=++imageLoadId;
+  if(activeImageBlob){URL.revokeObjectURL(activeImageBlob);activeImageBlob="";}
+  $("imageViewerTitle").textContent=title||"Image preview";
+  const img=$("imageViewerImage");img.classList.remove("is-zoomed");img.hidden=false;img.removeAttribute("src");$("imageViewerStatus").hidden=true;$("imageViewerStatus").innerHTML="";
+  $("imageViewer").hidden=false;
+  try{
+    const blobUrl=await GB.fileBlobUrl(url,{contentType:"image/*"});
+    if(myLoad!==imageLoadId){URL.revokeObjectURL(blobUrl);return;}
+    activeImageBlob=blobUrl;$("imageViewerStatus").hidden=true;img.hidden=false;img.src=blobUrl;
+  }catch(err){
+    if(myLoad!==imageLoadId)return;
+    img.hidden=true;$("imageViewerStatus").innerHTML=`<div class="status-card"><p><strong>Image unavailable</strong></p><p>${GBUI.esc(err?.message||"This image could not be opened.")}</p></div>`;$("imageViewerStatus").hidden=false;
+  }
+}
+function closeDocumentViewer(){viewerLoadId++;$("documentOpenSeparate").hidden=true;$("documentViewer").hidden=true;$("documentViewerFrame").hidden=true;$("documentViewerFrame").removeAttribute("src");$("documentViewerPdf").hidden=true;$("documentViewerPdf").innerHTML="";$("documentViewerStatus").hidden=false;if(activeDocumentBlob){URL.revokeObjectURL(activeDocumentBlob);activeDocumentBlob="";}}
+function closeImageViewer(){clearTimeout(imageZoomTimer);lastImageTap=0;imageLoadId++;$("imageViewer").hidden=true;const img=$("imageViewerImage");img.hidden=false;img.removeAttribute("src");img.classList.remove("is-zoomed");$("imageViewerStatus").hidden=true;$("imageViewerStatus").innerHTML="";if(activeImageBlob){URL.revokeObjectURL(activeImageBlob);activeImageBlob="";}}
+async function downloadMaterial(id,button){
+  const m=items.find(x=>String(x.id)===String(id));if(!m)return;if(m.locked){GBPremium.show("learning material",m.title);return;}if(!Array.isArray(m.attachments)||!m.attachments.length)return;
+  const files=m.attachments;
+  try{
+    GBUI.showDownloadProgress(files.length===1?(files[0].fileName||"Material"):`${files.length} material files`,0);
+    for(let i=0;i<files.length;i++){
+      const f=files[i];GBUI.updateDownloadProgress(0,files.length>1?`Downloading ${i+1} of ${files.length}: ${f.fileName||"Attachment"}`:"Starting download…");
+      await GB.download(f.url,f.fileName||"material-download",(pct,label)=>{const overall=((i+Math.max(0,Math.min(100,Number(pct)||0)/100))/files.length)*100;GBUI.updateDownloadProgress(overall,files.length>1?`Downloading ${i+1} of ${files.length}: ${label||""}`:label);},{persistent:true,persistKey:downloadKey(m,f),directoryKey:files.length>1?`material:${m.id}:directory`:"",contentType:f.contentType||"application/octet-stream"});
+    }
+    downloadedCache.set(`material:${m.id}:all`,true);GBUI.finishDownloadProgress(true);
+  }catch(err){GBUI.finishDownloadProgress(false,err?.message||"Download failed.")}
+}
+document.addEventListener("click",async e=>{
+  const tab=e.target.closest("[data-tab]");if(tab){current=tab.dataset.tab;updateUrl();render();return;}
+  const premium=e.target.closest("[data-material-premium]");if(premium){const m=items.find(row=>String(row.id)===String(premium.dataset.materialPremium));if(m?.locked) GBPremium.show("learning material",m.title);return;}
+  const open=e.target.closest("[data-material-open]");if(open){openMaterial(open.dataset.materialOpen);return;}
+  const imageButton=e.target.closest("[data-view-image]");if(imageButton){await openImageViewer(imageButton.dataset.viewImage,imageButton.dataset.viewName||"Image preview");return;}
+  const documentButton=e.target.closest("[data-view-document]");if(documentButton){await openDocumentViewer(documentButton.dataset.viewDocument,documentButton.dataset.viewName||"Learning material",documentButton.dataset.viewType||"application/pdf",Number(documentButton.dataset.viewSize)||0);return;}
+  const bodyImage=e.target.closest("#mBody .rich img");if(bodyImage){e.preventDefault();await openImageViewer(bodyImage.getAttribute("src")||bodyImage.src,bodyImage.getAttribute("alt")||"Image in learning note");return;}
+  const dl=e.target.closest("[data-download-material]");if(dl){await downloadMaterial(dl.dataset.downloadMaterial,dl);return;}
+});
+function closeModal(){$("modal").hidden=true;document.body.classList.remove("noscroll");$("mBody").innerHTML=""}
+$("mClose").onclick=closeModal;$("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+$("documentViewerClose").onclick=closeDocumentViewer;$("imageViewerClose").onclick=closeImageViewer;
+const imageStage=$("imageViewerStage"),zoomImage=$("imageViewerImage");
+function toggleImageZoom(){zoomImage.classList.toggle("is-zoomed");if(!zoomImage.classList.contains("is-zoomed")){imageStage.scrollTo({top:0,left:0,behavior:"smooth"});zoomImage.style.width="";}}
+zoomImage.addEventListener("click",e=>{
+  if(suppressZoomClick){suppressZoomClick=false;return;}
+  const now=Date.now();
+  if(lastImageTap&&now-lastImageTap<320){clearTimeout(imageZoomTimer);toggleImageZoom();lastImageTap=0;return;}
+  lastImageTap=now;clearTimeout(imageZoomTimer);
+  imageZoomTimer=setTimeout(()=>{toggleImageZoom();lastImageTap=0;},320);
+});
+let imageDrag=null;
+zoomImage.addEventListener("pointerdown",e=>{if(!zoomImage.classList.contains("is-zoomed")||e.pointerType==="touch")return;imageDrag={x:e.clientX,y:e.clientY,left:imageStage.scrollLeft,top:imageStage.scrollTop,moved:false};zoomImage.setPointerCapture?.(e.pointerId);});
+let suppressZoomClick=false;
+zoomImage.addEventListener("pointermove",e=>{if(!imageDrag)return;const dx=e.clientX-imageDrag.x,dy=e.clientY-imageDrag.y;if(Math.abs(dx)+Math.abs(dy)>4)imageDrag.moved=true;if(imageDrag.moved){imageStage.scrollLeft=imageDrag.left-dx;imageStage.scrollTop=imageDrag.top-dy;}});
+const stopImageDrag=()=>{if(imageDrag?.moved){suppressZoomClick=true;setTimeout(()=>suppressZoomClick=false,80);}imageDrag=null;};zoomImage.addEventListener("pointerup",stopImageDrag);zoomImage.addEventListener("pointercancel",stopImageDrag);
+addEventListener("keydown",e=>{if(e.key==="Escape"){if(!$('imageViewer').hidden)closeImageViewer();else if(!$('documentViewer').hidden)closeDocumentViewer();else closeModal();}});
+$("materialSearch").value=searchTerm;
+let materialSearchTimer;
+$("materialSearch").addEventListener("input",e=>{searchTerm=e.target.value;clearTimeout(materialSearchTimer);materialSearchTimer=setTimeout(()=>{updateUrl();render()},140)});
+let materialLoadNumber=0;
+async function loadLibrary(){
+  const number=++materialLoadNumber;
+  $("out").innerHTML='<div class="card"><p class="muted">Loading your learning library…</p></div>';
+  try {
+    const data=await GB.api("/api/materials?space="+GBLearningSpaces.space);
+    if(number!==materialLoadNumber)return;
+    items=Array.isArray(data)?data:(data.items||[]);
+    // Only unrestricted documents can be cached locally. Premium records are
+    // never retained when an admin downgrades the account later.
+    if(GBLearningSpaces.space==="public"){
+      try{localStorage.setItem("gbMaterialsCache",JSON.stringify(items.filter(m=>m.accessLevel!=="restricted"&&!m.locked)))}catch{}
+    }
+    const allowed=new Set(GBUI.mySubjects());
+    items=items.filter(m=>allowed.has(m.subject||"General"));
+    if(current!=="All"&&!allowed.has(current))current="All";
+    updateUrl();render();
+  }catch(err){
+    if(number!==materialLoadNumber)return;
+    if(GBLearningSpaces.space==="public"){
+      try {
+        const cache=JSON.parse(localStorage.getItem("gbMaterialsCache")||"[]");
+        if(Array.isArray(cache)&&cache.length){
+          items=cache.filter(m=>m.accessLevel!=="restricted"&&new Set(GBUI.mySubjects()).has(m.subject||"General"));
+          render();return;
+        }
+      } catch {}
+    }
+    $("out").innerHTML='<div class="card"><p class="error">Learning materials could not be loaded. Please check your connection and try again.</p><button type="button" class="btn primary" id="retryMaterialLoad">Try again</button></div>';
+    document.getElementById("retryMaterialLoad")?.addEventListener("click",loadLibrary,{once:true});
+  }
+}
+GBLearningSpaces.init({onChange:loadLibrary}).then(loadLibrary);
+</script>
+</body>
+</html>

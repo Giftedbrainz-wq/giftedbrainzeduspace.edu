@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#082d63">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.ico">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<title>My Account • Gifted Brainz Tutorial</title>
+<link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body>
+<div class="network-banner" id="networkBanner"></div>
+<div id="shell">
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><span class="ic">👤</span> My Account</div>
+      <div class="topbar-right"><span class="who" id="who"></span><button class="btn light" onclick="GB.logout()">Log out</button></div>
+    </div>
+    <div class="content">
+      <section class="card">
+        <div class="section-head"><h2>Your Details</h2></div>
+        <div class="kv" id="kv"></div>
+      </section>
+
+<section class="card">
+        <div class="section-head"><h2>Edit Profile</h2></div>
+        <form id="profileForm" class="formgrid">
+          <div class="field"><label>Full name</label><input id="pname" maxlength="120" required></div>
+          <div class="field"><label>Username</label><input id="pusername" maxlength="80" required></div>
+          <div class="field"><label>Email</label><input id="pemail" type="email" maxlength="160" required></div>
+          <div class="field full"><label>Assigned subjects</label><div class="notice">Choose up to four subjects, including compulsory Use of English. Your selection updates learning materials, videos, CBT tests and progress.</div><div id="profileSubjects" class="subject-select-grid" aria-live="polite"></div></div>
+          <div class="field full"><label for="personalPhoto">Upload your profile picture (optional)</label><input type="file" id="personalPhoto" accept="image/png,image/jpeg,image/webp"><small class="muted">Images are compressed before uploading to reduce storage use.</small></div><div class="field full"><label>Choose your avatar</label><div class="avatar-picker" id="accountAvatars" role="radiogroup" aria-label="Choose profile avatar"></div></div>
+          <button class="btn primary">Save profile</button>
+        </form><p id="profileMsg"></p>
+      </section>
+
+      <section class="card">
+        <div class="section-head"><h2>Change Your Password</h2></div>
+        <form id="pf" class="formgrid">
+          <div class="field"><label>Current password</label><input id="cur" type="password" autocomplete="current-password" required maxlength="200"></div>
+          <div class="field"><label>New password</label><input id="np" type="password" autocomplete="new-password" minlength="8" required maxlength="200"><small class="muted">At least 8 characters.</small></div>
+          <div class="field"><label>Repeat new password</label><input id="np2" type="password" autocomplete="new-password" minlength="8" required maxlength="200"></div>
+          <button class="btn primary">Save new password</button>
+        </form>
+        <p id="pmsg"></p>
+      </section>
+
+      <section class="card">
+        <div class="section-head"><h2>Delete My Account</h2></div>
+        <p class="muted">This is permanent. Your profile and associated account data will be permanently removed from the database. To continue, enter your exact username and current password.</p>
+        <form id="deleteForm" class="formgrid">
+          <div class="field"><label>Username</label><input id="delUser" autocomplete="username" required maxlength="80"></div>
+          <div class="field"><label>Password</label><input id="delPass" type="password" autocomplete="current-password" required maxlength="200"></div>
+          <button class="btn danger">Permanently delete account</button>
+        </form>
+        <p id="delMsg"></p>
+      </section>
+
+      <section class="card">
+        <div class="section-head"><h2>Sign Out</h2></div>
+        <p class="muted">Signing out clears your session from this device.</p>
+        <button class="btn light" onclick="GB.logout()">Log out of Gifted Brainz</button>
+      </section>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><script src="/app.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/compact-image.js?v=12.21.0"></script><script src="/gb-ui.js?v=12.21.0"></script>
+<script>
+if(!GB.token()) location="/login.html";
+GBUI.mount({active:"/account.html"});
+const $=id=>document.getElementById(id);
+
+Promise.all([GB.api("/api/dashboard"),GB.api("/api/subjects/catalog")]).then(([d,catalog])=>{
+  const u=d.user;
+  $("who").textContent=u.name;
+  $("kv").innerHTML=[
+    ["Full name",u.name],["Username",u.username],["Email",u.email||"—"],
+    ["Subjects",(u.selectedSubjects||["Use of English"]).join(", ")],["Account",u.accountType==="activated"?"Activated":"Free"],["Topics completed",d.progress?.completed||0]
+  ].map(([k,v])=>`<div><small>${k}</small><b>${GBUI.esc(v)}</b></div>`).join("");
+$("pname").value=u.name||"";$("pusername").value=u.username||"";$("pemail").value=u.email||"";
+$("accountAvatars").innerHTML=Array.from({length:24},(_,i)=>{const id=`scholar-${String(i+1).padStart(2,"0")}`;return `<label class="avatar-choice"><input type="radio" name="profileAvatar" value="${id}" ${id===(u.avatar||"scholar-01")?"checked":""}><img src="/assets/avatars/${id}.png?v=12.21.0" alt="Avatar ${i+1}" loading="lazy"></label>`}).join("");
+const selected=u.selectedSubjects||["Use of English"];
+const available=[...new Set([...catalog,...selected])];
+if(u.accountType==='activated'){
+  document.querySelector('#profileSubjects').previousElementSibling.textContent='Your assigned subjects are managed by the administrator.';
+}
+$("profileSubjects").innerHTML=available.map(s=>`<label class="subject-choice"><input type="checkbox" name="selectedSubjects" value="${GBUI.esc(s)}" ${selected.includes(s)?"checked":""} ${s==="Use of English"||u.accountType==="activated"?"disabled":""}><span>${GBUI.SUBJECT_ICONS[s]||"📘"} ${GBUI.esc(s)}${s==="Use of English"?" (compulsory)":""}</span></label>`).join("");
+const subjectBoxes=[...document.querySelectorAll('input[name="selectedSubjects"]')];
+const limitSubjects=()=>{const total=subjectBoxes.filter(b=>b.checked).length;for(const b of subjectBoxes)if(b.value!=="Use of English")b.disabled=!b.checked&&total>=4;};
+subjectBoxes.forEach(b=>b.addEventListener("change",limitSubjects));limitSubjects();
+}).catch(e=>{$("kv").innerHTML=`<p class="error">${GBUI.esc(e.message)}</p>`});
+
+$("profileForm").addEventListener("submit",async e=>{
+  e.preventDefault(); const m=$("profileMsg");m.className="";m.textContent="";
+  try{let uploadedAvatar=null;
+    if($("personalPhoto")?.files?.length){const webp=await GBCompactImage($("personalPhoto").files[0]);const result=await GB.api('/api/me/photo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webp})});uploadedAvatar=result.avatar;}
+    const d=await GB.api("/api/me",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:$("pname").value.trim(),username:$("pusername").value.trim(),email:$("pemail").value.trim(),avatar:uploadedAvatar||document.querySelector('input[name="profileAvatar"]:checked')?.value||JSON.parse(localStorage.getItem("gbUser")||sessionStorage.getItem("gbUser")||"{}").avatar||"scholar-01",...(document.querySelector('#profileSubjects input:not(:disabled)')?{selectedSubjects:["Use of English",...Array.from(document.querySelectorAll('input[name="selectedSubjects"]:checked')).map(b=>b.value).filter(v=>v!=="Use of English")]}:{})})});(sessionStorage.getItem("gbToken")&&!localStorage.getItem("gbToken")?sessionStorage:localStorage).setItem("gbUser",JSON.stringify(d.user));m.className="ok";m.textContent="Profile updated successfully.";setTimeout(()=>location.reload(),500)}catch(err){m.className="error";m.textContent=err.message}
+});
+$("pf").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const m=$("pmsg"); m.className=""; m.textContent="";
+  if($("np").value.length<8){m.className="error";m.textContent="The new password must be at least 8 characters.";return}
+  if($("np").value!==$("np2").value){m.className="error";m.textContent="The two new passwords do not match.";return}
+  try{
+    await GB.api("/api/me/password",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({currentPassword:$("cur").value,newPassword:$("np").value})});
+    m.className="ok"; m.textContent="Password updated. Use it the next time you log in.";
+    $("pf").reset();
+  }catch(err){m.className="error";m.textContent=err.message}
+});
+
+$("deleteForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const m=$("delMsg"); m.className=""; m.textContent="";
+  const ok=await GBUI.confirmAction("Delete your account permanently?","This cannot be undone. Your profile and associated account data will be permanently deleted.","Yes, delete my account");
+  if(!ok)return;
+  try{
+    await GB.api("/api/me/delete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:$("delUser").value,password:$("delPass").value})});
+    try{localStorage.removeItem("gbToken");localStorage.removeItem("gbUser");sessionStorage.removeItem("gbToken");sessionStorage.removeItem("gbUser");}catch{}
+    m.className="ok";m.textContent="Account deleted. Redirecting…";
+    setTimeout(()=>location="/",700);
+  }catch(err){m.className="error";m.textContent=err.message}
+});
+</script>
+</body>
+</html>

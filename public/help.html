@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#082d63">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.ico">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<title>Help &amp; Support • Gifted Brainz Tutorial</title>
+<link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body class="gb-help-clean">
+<main class="gb-help-card" id="password">
+ <a class="gb-help-back" href="/dashboard.html">← Back to EduSpace</a>
+ <img src="/assets/logo-full.png" alt="Gifted Brainz EduSpace" class="gb-help-logo">
+ <h1>Help &amp; Support</h1>
+ <p>Need assistance with your account or learning activities? Contact our support team.</p>
+ <a id="contactAdministrator" class="gb-whatsapp-button" href="#" target="_blank" rel="noopener noreferrer">🟢 Contact Administrator</a>
+ <small>For security, never share your password or verification codes.</small>
+</main>
+<script src="/app.js?v=12.21.0"></script>
+<script>
+(()=>{'use strict';let who='';try{const u=JSON.parse(localStorage.getItem('gbUser')||sessionStorage.getItem('gbUser')||'{}');if(u.username)who=' My username is '+String(u.username).slice(0,80)+'.';}catch{}
+ document.getElementById('contactAdministrator').href='/api/support/whatsapp?context='+encodeURIComponent(location.hash==='#password'?'password':'help');
+})();
+</script></body></html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#082d63">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/favicon.ico">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<title>Student Dashboard • Gifted Brainz Tutorial</title>
+<link rel="stylesheet" href="/styles.css?v=12.21.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<style>.gb-superbiz-hero{background-image:linear-gradient(110deg,rgba(8,45,99,.96),rgba(8,45,99,.78)),url("/assets/superbiz-doodle-bg.png");background-size:cover;background-position:center;color:#fff;border-radius:22px;box-shadow:0 16px 34px rgba(8,45,99,.18)}.gb-superbiz-hero h1,.gb-superbiz-hero p,.gb-superbiz-hero .eyebrow{color:#fff}.recommendation-link{display:flex;flex-direction:column;gap:8px;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}.recommendation-link:hover,.recommendation-link:focus-visible{transform:translateY(-3px);box-shadow:0 12px 26px rgba(8,45,99,.14);outline:2px solid #e6b84b;outline-offset:2px}.recommendation-action{align-self:flex-start;margin-top:auto}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/typography.css?v=12.21.0">
+<link rel="stylesheet" href="/mobile-polish.css?v=12.21.0">
+<link rel="stylesheet" href="/v1218-corrections.css?v=12.21.0"><link rel="stylesheet" href="/brand-gold-v1221.css?v=12.21.0"></head>
+<body data-channel-prompt="on">
+<div class="network-banner" id="networkBanner"></div>
+<div id="shell">
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><span class="ic">🏠</span> Dashboard</div>
+      <div class="topbar-right"><span class="who" id="who"></span><button class="btn light" onclick="GB.logout()">Log out</button></div>
+    </div>
+    <div class="content">
+      <section class="hero-banner gb-superbiz-hero">
+        <div class="eyebrow">Gifted Brainz Tutorial</div>
+        <h1 id="hello">Welcome back! 👋</h1>
+        <p>This is your dashboard: a clean snapshot of your activity, scores and subject progress.
+           Use the menu on the left when you want to open another area.</p>
+        <div class="jamb-countdown" data-jamb-countdown></div>
+      </section>
+
+      <section class="card" id="dashboardSpaceEntry" aria-label="Learning spaces">
+        <div class="section-head"><h2>Explore Learning Spaces</h2></div>
+        <p class="muted" id="dashboardSpaceDescription">Your available materials and assessments, organised for you.</p>
+        <div class="factions" id="dashboardSpaceActions"><a class="btn primary" href="/materials.html">Open Public Space →</a></div>
+      </section>
+
+      <div class="statgrid" id="statgrid"></div>
+
+      <section class="card continue-card" id="continueCard">
+        <div class="section-head"><h2>Continue Learning</h2></div>
+        <div id="continueLearning"><p class="muted">Loading your next step…</p></div>
+      </section>
+
+      <section class="card" id="newLearningTools"><div class="section-head"><h2>🧠 Personal Learning Tools</h2></div><p class="muted">Build a revision notebook, plan your week and save important questions. Connect with a study partner when you need support.</p><div class="factions"><a class="btn primary" href="/learning-centre.html">Open My Learning Centre →</a><a class="btn light" href="/study-partners.html">Study Partners 🤝</a></div></section>
+      <section class="card" id="studyPlanReminder" hidden>
+        <div class="section-head"><h2>📅 Your Upcoming Study Plan</h2><a class="btn light" href="/learning-centre.html#plans">Open Planner →</a></div>
+        <div id="studyPlanReminderBody" aria-live="polite"></div>
+      </section>
+      <section class="card" id="recommendationsCard">
+        <div class="section-head"><h2>Study Recommendations</h2></div>
+        <p class="muted">Based on your topic coverage. These point you to study materials for the subjects you have covered the least.</p>
+        <div id="recommendations" class="subjectgrid"><p class="muted">Loading recommendations…</p></div>
+      </section>
+
+      <div class="card">
+        <div class="section-head"><h2>Your Subject Progress</h2></div>
+        <p class="muted">Topics you have ticked off as covered in Progress Tracking, by subject.</p>
+        <div id="subjectProgress" class="subjectgrid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><script src="/app.js?v=12.21.0"></script><script src="/jamb-countdown.js?v=12.21.0"></script><script src="/api.js?v=12.21.0"></script><script src="/gb-ui.js?v=12.21.0"></script>
+<script>
+if(!GB.token()) location="/login.html";
+GBUI.mount({active:"/dashboard.html"});
+const $=id=>document.getElementById(id);
+
+const STATS=[
+  {key:"completed", icon:"✅", label:"Topics Completed", note:"Topics you have ticked off in Progress Tracking."},
+  {key:"percent",   icon:"📊", label:"Overall Progress", note:"Your share of covered topics across your subjects."},
+  {key:"materials", icon:"📚", label:"Study Materials", note:"Published materials available to you."},
+  {key:"cbtTests",  icon:"📝", label:"CBT Tests", note:"Published CBT tests available to you."},
+  {key:"videos",    icon:"🎬", label:"Video Lessons", note:"Published video lessons available to you."}
+];
+
+async function load(){
+  try{
+    const d=await GB.api("/api/dashboard");
+    // Optional: the dashboard remains usable if the Learning Centre endpoint is unavailable.
+    Promise.resolve(d.learningPlans||[]).then(plans=>{
+      if(!Array.isArray(plans))return;
+      const todayLocal=new Date();
+      const today=[todayLocal.getFullYear(),String(todayLocal.getMonth()+1).padStart(2,"0"),String(todayLocal.getDate()).padStart(2,"0")].join("-");
+      const upcoming=plans.filter(x=>!x.completed&&x.date<=today).slice(0,3);
+      if(!upcoming.length)return;
+      const el=$("studyPlanReminder"); el.hidden=false;
+      $("studyPlanReminderBody").innerHTML=upcoming.map(x=>`<div class="continue-inner" style="margin-bottom:8px"><div class="continue-icon">📖</div><div><strong>${GBUI.esc(x.title)}</strong><p class="muted">${x.date<today?"Overdue":"Due today"}${x.time?" · "+GBUI.esc(x.time):""} · ${GBUI.esc(x.subject||"Independent study")}</p></div></div>`).join("");
+    }).catch(()=>{});
+    try{(sessionStorage.getItem("gbToken")&&!localStorage.getItem("gbToken")?sessionStorage:localStorage).setItem("gbUser",JSON.stringify(d.user))}catch{}
+    const hasPremium=d.user.accountType==="activated";
+    $("dashboardSpaceActions").innerHTML=`<a class="btn primary" href="/materials.html">Public Materials</a><a class="btn light" href="/cbt.html">Public CBT Tests</a>${hasPremium?`<a class="btn gold" href="/materials.html?space=premium">✦ Premium Materials</a><a class="btn gold" href="/cbt.html?space=premium">✦ Premium CBT Tests</a>`:""}`;
+    $("dashboardSpaceDescription").textContent=hasPremium?"Your account is activated. Public and Premium Spaces are available separately.":"Your Public Space contains all free resources assigned to your subjects.";
+    const first=(d.user.name||"").split(" ")[0]||d.user.name;
+    $("hello").textContent="Welcome back, "+first+"! 👋";
+    $("who").textContent=d.user.name;
+
+    const progress=d.progress||{completed:0,total:0,percent:0};
+    const values={
+      completed:`${progress.completed}/${progress.total}`,
+      percent:progress.percent+"%",
+      materials:d.counts?.materials||0,
+      cbtTests:d.counts?.cbtTests||0,
+      videos:d.counts?.videos||0
+    };
+    $("statgrid").innerHTML=STATS.map(s=>`<div class="statcard plain">
+      <div class="ic">${s.icon}</div><strong>${GBUI.esc(String(values[s.key]))}</strong>
+      <small>${s.label}</small><small class="icon-note">${s.note}</small></div>`).join("");
+
+    const recs=d.recommendations||[];
+    $("subjectProgress").innerHTML=recs.map(r=>`<div class="subject-card static">
+        <b>${GBUI.SUBJECT_ICONS[r.subject]||"📗"} ${GBUI.esc(r.subject)}</b>
+        <div class="progress"><i style="width:${r.percent}%"></i></div>
+        <small>${r.percent}% covered • ${r.completed}/${r.total} topic${r.total===1?"":"s"}</small></div>`).join("")
+      ||"<p class='muted'>Select subjects in My Account to see your progress.</p>";
+
+    const recommendationCard=r=>{
+      const url="/materials.html?subject="+encodeURIComponent(r.subject);
+      return `<a class="subject-card recommendation-link" href="${url}" aria-label="Study ${GBUI.esc(r.subject)} materials">
+        <b>${GBUI.SUBJECT_ICONS[r.subject]||"📗"} ${GBUI.esc(r.subject)}</b>
+        <small>${r.percent}% of topics covered • ${r.materialsCount} material${r.materialsCount===1?"":"s"} available</small>
+        <strong style="margin-top:4px">${GBUI.esc(r.priority)}</strong>
+        <span class="btn primary recommendation-action">Study materials →</span>
+      </a>`;
+    };
+    $("recommendations").innerHTML=recs.length?recs.map(recommendationCard).join(""):"<p class='muted'>Select subjects in My Account to receive targeted recommendations.</p>";
+
+    if(recs.length){
+      const lowest=recs[0];
+      if(lowest.total===0){
+        $("continueLearning").innerHTML=`<div class="continue-inner"><div class="continue-icon">📚</div><div><strong>Your learning journey starts here.</strong><p class="muted">Check back soon for topics in ${GBUI.esc(lowest.subject)}, or browse your study materials now.</p></div><a class="btn primary" href="/materials.html">Browse materials →</a></div>`;
+      }else if(lowest.percent>=100){
+        $("continueLearning").innerHTML=`<div class="continue-inner"><div class="continue-icon">🎯</div><div><strong>Great work — every listed topic is covered!</strong><p class="muted">Keep your knowledge sharp with a CBT test or a revisit of your study materials.</p></div><div class="factions"><a class="btn primary" href="/cbt.html">Browse CBT Tests</a><a class="btn light" href="/materials.html">Study materials</a></div></div>`;
+      }else{
+        $("continueLearning").innerHTML=`<div class="continue-inner"><div class="continue-icon">💡</div><div><strong>Focus on ${GBUI.esc(lowest.subject)} next</strong><p class="muted">You have covered ${lowest.percent}% of ${GBUI.esc(lowest.subject)} topics so far. Study the materials for this subject, then tick off topics in Progress Tracking as you go.</p></div><div class="factions"><a class="btn primary" href="/materials.html?subject=${encodeURIComponent(lowest.subject)}">Study materials →</a><a class="btn light" href="/progress.html">Track topics</a></div></div>`;
+      }
+    }else{
+      $("continueLearning").innerHTML=`<div class="continue-inner"><div class="continue-icon">📚</div><div><strong>Your learning journey starts here.</strong><p class="muted">Browse your study materials, or track the topics you have covered.</p></div><div class="factions"><a class="btn primary" href="/materials.html">Study materials</a><a class="btn light" href="/progress.html">Track Topics</a></div></div>`;
+    }
+  }catch(e){
+    $("statgrid").innerHTML=`<p class="error">${GBUI.esc(e.message)}</p>`;
+  }
+}
+load();
+</script>
+<script defer src="/channel-prompt.js?v=12.21.0"></script></body>
+</html>

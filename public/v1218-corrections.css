@@ -1,0 +1,46 @@
+/* v12.18 focused corrections, scoped to avoid changing the accepted desktop dashboard */
+#gbSkipIntro,#install,.install-btn,.install-modal{display:none!important}
+.study-details-screen{position:fixed!important;inset:0!important;z-index:10020!important;background:#fff!important;border:0!important;border-radius:0!important;overflow:auto!important;padding:24px max(16px,calc((100vw - 680px)/2))!important;margin:0!important;box-shadow:none!important}
+.study-details-screen:before{content:'Student details';display:block;position:sticky;top:0;background:#fff;color:#153660;font-weight:800;padding:15px 0;border-bottom:1px solid #e3e8f0;margin-bottom:18px}
+.study-contact-profile{text-align:center;padding:20px 10px;border-bottom:1px solid #e4eaf3;margin-bottom:22px}
+.study-contact-profile img{height:100px;width:100px;object-fit:cover;border-radius:50%;border:3px solid #e7eef8}
+.study-contact-profile h2{font-size:1.2rem;margin:12px 0 5px}
+.battle-history-full{position:fixed;inset:0;z-index:9999;background:#f3f6fb;overflow-y:auto;padding:24px 12px}
+.battle-history-panel{max-width:900px;margin:auto;background:#fff;padding:20px;border-radius:14px}
+.battle-history-panel .section-head{position:sticky;top:0;background:#fff;padding:10px 0;z-index:2}
+@media(max-width:600px){.study-message .msg-bubble{max-width:85%;padding:8px 10px 5px;font-size:13px}.study-message .msg-tools{gap:7px}.study-message .msg-tools button{font-size:12px;min-height:30px}.pdf-page-holder{padding:2px!important}.battle-history-full{padding:0}.battle-history-panel{border-radius:0;min-height:100dvh;padding:12px}}
+
+#gbNoticePanel{box-sizing:border-box;overflow-x:hidden;overflow-wrap:anywhere}
+@media(max-width:600px){#gbNoticePanel{position:fixed!important;inset:env(safe-area-inset-top,0px) 0 0!important;top:0!important;width:100vw!important;max-height:100dvh!important;height:100dvh!important;border-radius:0!important;padding:22px 14px!important;z-index:20000!important;background:#fff!important;overflow-y:auto!important}}
+.gb-help-clean{background:#f2f6fc;min-height:100dvh;display:grid;place-items:center;padding:20px}.gb-help-card{width:min(100%,460px);padding:clamp(22px,4vw,42px);background:#fff;border-radius:18px;box-shadow:0 15px 46px #15324d18;text-align:center}.gb-help-back{display:block;text-align:left;font-size:13px;text-decoration:none;color:#245187;margin-bottom:20px}.gb-help-logo{width:170px;max-width:65%;height:auto}.gb-help-card h1{font-size:clamp(20px,3vw,25px)}.gb-help-card p{font-size:14px;line-height:1.6;color:#56677e}.gb-help-card small{display:block;margin-top:18px;color:#6c7890}.gb-whatsapp-button{display:block;background:#138a4b;border-radius:11px;padding:14px;color:white!important;font-weight:800;text-decoration:none;margin-top:24px}
+.announcement-reply-actions{display:flex;gap:12px;margin-top:8px}.announcement-reply-actions button{border:0;background:transparent;color:#28588b;cursor:pointer;font-size:12px;font-weight:700}.announcement-replies{max-height:none!important}.announcement-reply{padding:10px!important}.announcement-reply-top{flex-wrap:wrap}
+.battle-logos img.gb-logo-variant,.battle-logo{object-fit:contain}.gb-logo-variant-0{background:#e0f2fe!important}.gb-logo-variant-1{background:#f3e8ff!important}.gb-logo-variant-2{background:#dcfce7!important}.gb-logo-variant-3{background:#ffedd5!important}.gb-logo-variant-4{background:#fee2e2!important}.gb-logo-variant-5{background:#e0e7ff!important}.gb-logo-variant-6{background:#fef9c3!important}.gb-logo-variant-7{background:#ccfbf1!important}
+
+.adminrow{gap:8px!important;padding:9px 11px!important;align-items:center}.adminrow .factions{gap:5px}.adminrow .factions .btn{font-size:12px!important;padding:7px 9px!important}.adminrow .nm small{font-size:11px}
+.admin-topic-subject{border:1px solid #dce5ef;border-radius:10px;margin:10px 0;background:white;overflow:hidden}.admin-topic-subject summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;padding:12px;color:#173662}.admin-topic-subject summary small{color:#62758a}.admin-topic-subject .progress{margin:4px 12px}.admin-topic-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;padding:10px 20px;color:#536779;font-size:13px;list-style:none}.study-detail-close{position:sticky;top:0;z-index:4;background:white!important}
+
+.study-photo-upload{display:block;padding:10px 12px;border:1px dashed #94a8bf;border-radius:10px;font-size:13px}.study-photo-upload input{display:block;margin-top:9px;max-width:100%}.study-community-logo{display:flex;align-items:center;gap:10px}.study-community-logo img{width:48px;height:48px;border-radius:50%;object-fit:cover}.study-community-logo h3{min-width:0}
+
+img[src*="/battle/lion.png"]{filter:hue-rotate(0deg);border-radius:18%;}
+img[src*="/battle/diamond.png"]{filter:hue-rotate(70deg) saturate(1.12);border-radius:50%;}
+img[src*="/battle/dragon.png"]{filter:hue-rotate(145deg) saturate(1.2);border-radius:24%;}
+img[src*="/battle/compass.png"]{filter:hue-rotate(210deg) saturate(1.1);border-radius:38%;}
+img[src*="/battle/crown.png"]{filter:hue-rotate(280deg) saturate(1.14);border-radius:16%;}
+img[src*="/battle/eagle.png"]{filter:sepia(.15) hue-rotate(40deg);border-radius:45%;}
+img[src*="/battle/panther.png"]{filter:hue-rotate(110deg) saturate(1.18);border-radius:28%;}
+img[src*="/battle/phoenix.png"]{filter:hue-rotate(330deg) saturate(1.18);border-radius:12%;}
+img[src*="/battle/fire.png"]{filter:hue-rotate(0deg);border-radius:18%;}
+img[src*="/battle/knight.png"]{filter:hue-rotate(70deg) saturate(1.12);border-radius:50%;}
+img[src*="/battle/trophy.png"]{filter:hue-rotate(145deg) saturate(1.2);border-radius:24%;}
+img[src*="/battle/tiger.png"]{filter:hue-rotate(210deg) saturate(1.1);border-radius:38%;}
+img[src*="/battle/meteor.png"]{filter:hue-rotate(280deg) saturate(1.14);border-radius:16%;}
+img[src*="/battle/titan.png"]{filter:sepia(.15) hue-rotate(40deg);border-radius:45%;}
+img[src*="/battle/atom.png"]{filter:hue-rotate(110deg) saturate(1.18);border-radius:28%;}
+img[src*="/battle/owl.png"]{filter:hue-rotate(330deg) saturate(1.18);border-radius:12%;}
+img[src*="/battle/rocket.png"]{filter:hue-rotate(0deg);border-radius:18%;}
+img[src*="/battle/wolf.png"]{filter:hue-rotate(70deg) saturate(1.12);border-radius:50%;}
+img[src*="/battle/shield.png"]{filter:hue-rotate(145deg) saturate(1.2);border-radius:24%;}
+img[src*="/battle/falcon.png"]{filter:hue-rotate(210deg) saturate(1.1);border-radius:38%;}
+img[src*="/battle/mountain.png"]{filter:hue-rotate(280deg) saturate(1.14);border-radius:16%;}
+img[src*="/battle/star.png"]{filter:sepia(.15) hue-rotate(40deg);border-radius:45%;}
+img[src*="/battle/lightning.png"]{filter:hue-rotate(110deg) saturate(1.18);border-radius:28%;}
