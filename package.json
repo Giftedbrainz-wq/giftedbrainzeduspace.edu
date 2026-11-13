@@ -1,0 +1,39 @@
+{
+  "name": "gifted-brainz-tutorial",
+  "version": "12.21.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "verify": "node scripts/verify-edgeone.mjs",
+    "test:features": "node --test scripts/material-edit-math.test.mjs scripts/question-bank-progress.test.mjs scripts/access-tier-connect.test.mjs",
+    "test:access": "node --test scripts/access-tier-connect.test.mjs",
+    "test:cbt-ui": "node --test scripts/cbt-ui-regression.test.mjs",
+    "test:graphics": "node --test scripts/graphics-html-fallback.test.mjs scripts/v126-space-graphics.test.mjs",
+    "test:arena": "node --test scripts/battle-arena.integration.test.mjs scripts/premium-discovery.integration.test.mjs scripts/arena-speed-regression.test.mjs",
+    "test:all": "npm run verify && npm run test:features && npm run test:cbt-ui && npm run test:arena && npm run test:v123 && npm run test:learning && npm run test:v125 && npm run test:v1252 && npm run test:messaging && npm run test:chat-infrastructure && npm run test:chat:realtime && npm run test:study:directory && npm run test:study:communities",
+    "test:arena:load": "node scripts/battle-load-smoke.mjs",
+    "test:v123": "node --test scripts/v123-release.integration.test.mjs",
+    "test:learning": "node --test scripts/learning-centre.integration.test.mjs",
+    "test:v125": "node --test scripts/v125-release.test.mjs",
+    "build:assets": "node scripts/build-assets.mjs",
+    "test:v1252": "node --test scripts/v1252-cbt-assets.test.mjs",
+    "test:typography": "node --test scripts/typography-mobile-regression.test.mjs",
+    "test:messaging": "node --test scripts/study-messaging-v1213.integration.test.mjs scripts/study-mobile-v1213.test.mjs",
+    "test:chat-infrastructure": "node --test scripts/chat-infrastructure-v1214.test.mjs scripts/chat-backend-integration-v1214.test.mjs",
+    "test:chat:staging": "node scripts/chat-staging-load.mjs",
+    "test:chat:realtime": "node --test scripts/chat-realtime-v1215.test.mjs scripts/chat-realtime-backend-v1215.integration.test.mjs",
+    "backfill:study:directory": "node scripts/backfill-study-directory.mjs",
+    "test:study:directory": "node --test scripts/study-directory-v1216.integration.test.mjs scripts/study-directory-v1216-migration.test.mjs",
+    "backfill:study:cutover": "node scripts/backfill-study-directory-v1216.mjs",
+    "test:study:staging": "node scripts/study-directory-staging-load.mjs",
+    "test:study:communities": "node --test scripts/study-communities-v1217.integration.test.mjs scripts/study-communities-v1217-migration.test.mjs",
+    "backfill:study:communities": "node scripts/backfill-study-communities-v1217.mjs",
+    "test:study:communities:staging": "node scripts/study-communities-staging-load.mjs"
+  },
+  "dependencies": {
+    "@edgeone/pages-blob": "^0.0.16"
+  }
+}
