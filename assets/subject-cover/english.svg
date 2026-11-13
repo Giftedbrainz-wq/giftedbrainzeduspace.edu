@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 250" role="img" aria-label="English learning illustration">
+<defs><linearGradient id="m" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f0d498"/><stop offset="1" stop-color="#d6efff"/></linearGradient></defs>
+<circle cx="161" cy="121" r="112" stroke="#fff" opacity=".13" fill="none"/><circle cx="161" cy="121" r="86" stroke="#fff" opacity=".10" fill="none"/>
+<g stroke="url(#m)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M58 69Q110 48 155 78Q201 48 248 69V179Q200 160 155 189Q109 161 58 179Z"/><path d="M155 79V188 M80 95Q108 86 133 100M80 113Q109 105 133 118M177 100Q202 87 227 97M177 118Q202 106 227 116"/></g>
+<circle cx="251" cy="60" r="4" fill="#e9c47b"/><circle cx="60" cy="204" r="3" fill="#b8d6f2"/>
+</svg>
